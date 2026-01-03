@@ -1,7 +1,5 @@
 ---
 const SITE_NAME = "The-Circle";
-const BRAND_TAGLINE = "The-Circle is the brand. Discord and Fantasy are the products.";
-const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
 ---
 
 <!DOCTYPE html>
@@ -12,7 +10,7 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
     <title>{SITE_NAME}</title>
     <meta
       name="description"
-      content="The-Circle is a laid-back brand built around two things: a drop-in Discord hangout and a private fantasy football league hub."
+      content="Welcome to The-Circle — a chill place to hang out, game, talk, and spend time with people."
     />
   </head>
 
@@ -39,144 +37,77 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
 
       <main class="container">
         <section class="hero">
-          <div class="heroGrid">
-            <div class="heroLeft">
-              <div class="badge">Brand-first • product-driven</div>
+          <div class="welcome">
+            <h1>
+              Welcome to {SITE_NAME}
+              <span class="glowDot" aria-hidden="true">•</span>
+            </h1>
 
-              <h1>
-                {SITE_NAME}
-                <span class="glowDot" aria-hidden="true">•</span>
-              </h1>
+            <p class="sub">
+              This is a laid-back corner of the internet for people who like having others around.
+              Sometimes that means gaming together, sometimes it’s music, movies, or just sitting in voice while you do your own thing.
+            </p>
 
-              <p class="sub">
-                {BRAND_TAGLINE}
-                <br />
-                A place you can drop into when you’re bored — hang out, game, watch stuff, or just talk.
-              </p>
+            <p class="sub">
+              There’s no pressure to be “active,” no cliques to break into, and no expectations.
+              It’s just a place you can drop into when you feel like it.
+            </p>
 
-              <div class="cta">
-                <a class="btn primary" href="/discord">Explore Discord</a>
-                <a class="btn ghost" href="/league">Explore League</a>
-                <a class="btn ghost" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join Discord</a>
-              </div>
-
-              <p class="fine">
-                No clout. No pressure. No “be active every day” nonsense. Just a clean setup and a chill vibe.
-              </p>
-            </div>
-
-            <div class="heroRight" aria-hidden="true">
-              <div class="orb orbA"></div>
-              <div class="orb orbB"></div>
-              <div class="panel">
-                <div class="panelTop">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                </div>
-
-                <div class="panelBody">
-                  <div class="stat">
-                    <span class="k">Drop-in energy</span>
-                    <span class="v">Low pressure</span>
-                  </div>
-                  <div class="stat">
-                    <span class="k">Channels</span>
-                    <span class="v">Organized</span>
-                  </div>
-                  <div class="stat">
-                    <span class="k">Voice/stream</span>
-                    <span class="v">Boosted quality</span>
-                  </div>
-                  <div class="stat">
-                    <span class="k">League hub</span>
-                    <span class="v">Private & clean</span>
-                  </div>
-                </div>
-
-                <div class="panelFoot">
-                  <span class="pill2">Come & go</span>
-                  <span class="pill2">Adult-friendly</span>
-                  <span class="pill2">No drama</span>
-                </div>
-              </div>
-            </div>
+            <p class="fine">
+              Take a look around and see if it feels right.
+            </p>
           </div>
         </section>
 
         <section class="card">
-          <div class="cardHead">
-            <h2>Choose your lane</h2>
-            <p class="note">
-              The-Circle is the umbrella. Pick what you’re here for — or use both.
-            </p>
-          </div>
+          <h2>What’s here</h2>
+          <p class="note">
+            You don’t have to use everything. Pick what you’re into.
+          </p>
 
           <div class="grid">
             <article class="tile">
               <div class="tileTop">
-                <span class="chip">Product</span>
                 <h3>Discord Hangout</h3>
+                <span class="chip">Live</span>
               </div>
-
               <p>
-                A well-built Discord that isn’t centered around a creator, product, or one game.
-                Drop in for voice, games, music, and movie nights — or just background company.
+                A clean, organized Discord for hanging out — voice, games, music, and movie nights.
+                Built to be low pressure and easy to use.
               </p>
-
               <div class="tileCta">
-                <a class="btn primary" href="/discord">See how it works</a>
-                <a class="btn ghost" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join now</a>
+                <a class="btn primary" href="/discord">Learn more</a>
+                <a class="btn ghost" href="/join">Join</a>
               </div>
             </article>
 
             <article class="tile">
               <div class="tileTop">
-                <span class="chip">Product</span>
-                <h3>Fantasy League</h3>
+                <h3>Fantasy League Hub</h3>
+                <span class="chip">Live</span>
               </div>
-
               <p>
-                A private league hub for the league you run: teams & owners, history, rules/settings,
-                and applications when a spot opens.
+                A private home base for the fantasy league — teams, history, rules, and applications when a spot opens.
               </p>
-
               <div class="tileCta">
-                <a class="btn primary" href="/league">League hub</a>
-                <a class="btn ghost" href="/league/apply">Apply</a>
+                <a class="btn primary" href="/league">Open hub</a>
+                <a class="btn ghost" href="/league/teams">Teams</a>
               </div>
             </article>
-          </div>
-        </section>
 
-        <section class="card">
-          <div class="cardHead">
-            <h2>The vibe</h2>
-            <p class="note">
-              Most “friends servers” are messy and fall apart. Most big servers are noisy and impersonal.
-              The-Circle is a reliable middle ground: small enough to feel human, set up well enough to actually use.
-            </p>
-          </div>
-
-          <div class="pills">
-            <span class="pill2">Low pressure</span>
-            <span class="pill2">No cliques</span>
-            <span class="pill2">Organized</span>
-            <span class="pill2">Good voice quality</span>
-            <span class="pill2">Come & go anytime</span>
-            <span class="pill2">Adult-friendly energy</span>
-          </div>
-        </section>
-
-        <section class="card final">
-          <h2>Ready?</h2>
-          <p class="note">
-            If you’re already on Discord a lot and want a reliable place to hang out, start here.
-            You can lurk first — nobody’s going to hassle you.
-          </p>
-          <div class="cta">
-            <a class="btn primary big" href="/join">Join The-Circle</a>
-            <a class="btn ghost big" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join Discord</a>
+            <article class="tile">
+              <div class="tileTop">
+                <h3>Coming soon</h3>
+                <span class="chip soft">WIP</span>
+              </div>
+              <p>
+                More Circle stuff as it grows — events, tools, and whatever ends up being useful.
+              </p>
+              <div class="tileCta">
+                <a class="btn ghost" href="/about">Why this exists</a>
+                <a class="btn ghost" href="/blog">Progress posts</a>
+              </div>
+            </article>
           </div>
         </section>
       </main>
@@ -184,7 +115,7 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
       <footer class="footer">
         <div class="container foot">
           <span>© {new Date().getFullYear()} {SITE_NAME}</span>
-          <span class="muted">Brand • Community • Products</span>
+          <span class="muted">A place to hang out</span>
         </div>
       </footer>
     </div>
@@ -215,52 +146,74 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
       .page{ min-height:100vh; display:flex; flex-direction:column; }
       main{ flex:1; }
 
-      /* Top Nav */
+      /* Top nav */
       .top{
-        position: sticky; top: 0; z-index: 10;
+        position: sticky;
+        top: 0;
+        z-index: 10;
         backdrop-filter: blur(10px);
         background: rgba(7,10,15,0.55);
         border-bottom: 1px solid rgba(255,255,255,0.10);
       }
-      .nav{ display:flex; align-items:center; justify-content:space-between; padding:14px 18px; gap:14px; }
-      .brand{ display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:-0.02em; white-space:nowrap; }
-      .mark{
-        width:12px;height:12px;border-radius:999px;background:#09ff03;
-        box-shadow: 0 0 0 6px rgba(9,255,3,0.12), 0 0 28px rgba(9,255,3,0.25);
+
+      .nav{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:14px 18px;
+        gap:14px;
       }
+
+      .brand{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        font-weight:900;
+        letter-spacing:-0.02em;
+        white-space:nowrap;
+      }
+
+      .mark{
+        width:12px;
+        height:12px;
+        border-radius:999px;
+        background:#09ff03;
+        box-shadow:
+          0 0 0 6px rgba(9,255,3,0.12),
+          0 0 28px rgba(9,255,3,0.25);
+      }
+
       .links{ display:flex; gap:14px; align-items:center; }
       .links a{ color: rgba(255,255,255,0.78); font-size:14px; }
       .links a:hover{ color: rgba(255,255,255,0.95); }
 
       .pill{
-        padding:10px 12px;border-radius:999px;
+        padding:10px 12px;
+        border-radius:999px;
         border: 1px solid rgba(9,255,3,0.24);
         background: rgba(9,255,3,0.10);
         color: rgba(255,255,255,0.95);
         box-shadow: 0 0 0 1px rgba(9,255,3,0.08) inset;
       }
+
       .mobileJoin{ display:none; }
 
       /* Hero */
-      .hero{ padding: 46px 0 18px; }
-      .heroGrid{ display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 18px; align-items: stretch; }
+      .hero{ padding: 44px 0 16px; }
 
-      .badge{
-        display:inline-flex; align-items:center;
-        padding: 8px 12px;
-        border: 1px solid rgba(255,255,255,0.14);
-        border-radius: 999px;
-        background: rgba(255,255,255,0.04);
-        color: rgba(255,255,255,0.78);
-        font-size: 13px;
-        letter-spacing: 0.01em;
+      .welcome{
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 22px;
+        background: rgba(255,255,255,0.06);
+        box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+        padding: 22px;
       }
 
       h1{
-        margin: 14px 0 10px;
-        font-size: 56px;
+        margin: 0 0 12px;
+        font-size: 52px;
         letter-spacing: -0.03em;
-        line-height: 1.02;
+        line-height: 1.05;
       }
 
       .glowDot{
@@ -270,71 +223,18 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
       }
 
       .sub{
-        margin: 0;
+        margin: 0 0 12px;
         color: rgba(255,255,255,0.74);
         font-size: 18px;
         line-height: 1.7;
-        max-width: 70ch;
+        max-width: 86ch;
       }
-
-      .cta{ display:flex; gap:12px; flex-wrap:wrap; margin-top: 16px; }
-
-      .btn{
-        display:inline-flex; align-items:center; justify-content:center;
-        padding: 12px 16px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.14);
-        background: rgba(255,255,255,0.04);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.22);
-        transition: transform .14s ease, background .14s ease, border-color .14s ease;
-      }
-      .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.07); }
-      .btn.primary{ border-color: rgba(9,255,3,0.22); background: rgba(9,255,3,0.10); }
-      .btn.ghost{ background: rgba(255,255,255,0.03); }
-      .btn.big{ padding: 13px 18px; border-radius: 16px; }
 
       .fine{
-        margin-top: 14px;
+        margin-top: 8px;
         color: rgba(255,255,255,0.55);
         font-size: 13px;
       }
-
-      /* Hero right panel */
-      .heroRight{ position: relative; }
-      .orb{
-        position:absolute; filter: blur(14px);
-        opacity: 0.9;
-        border-radius: 999px;
-      }
-      .orbA{ width: 210px; height: 210px; left: -10px; top: 20px; background: rgba(9,255,3,0.22); }
-      .orbB{ width: 240px; height: 240px; right: -20px; bottom: 10px; background: rgba(120,170,255,0.20); }
-
-      .panel{
-        position: relative;
-        height: 100%;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.12);
-        background: rgba(255,255,255,0.05);
-        box-shadow: 0 30px 80px rgba(0,0,0,0.45);
-        overflow: hidden;
-        padding: 14px;
-      }
-
-      .panelTop{ display:flex; gap:8px; padding: 6px 6px 12px; }
-      .dot{ width:10px; height:10px; border-radius:999px; background: rgba(255,255,255,0.18); }
-
-      .panelBody{ display:grid; gap: 10px; padding: 6px; }
-      .stat{
-        display:flex; justify-content:space-between; gap:12px;
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 16px;
-        padding: 12px 12px;
-        background: rgba(255,255,255,0.03);
-      }
-      .k{ color: rgba(255,255,255,0.65); font-size: 13px; }
-      .v{ color: rgba(255,255,255,0.92); font-weight: 700; }
-
-      .panelFoot{ display:flex; flex-wrap:wrap; gap: 8px; padding: 12px 6px 4px; }
 
       /* Cards */
       .card{
@@ -346,21 +246,42 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
         box-shadow: 0 20px 60px rgba(0,0,0,0.45);
       }
 
-      .cardHead{ display:flex; align-items:baseline; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
       h2{ margin: 0 0 8px; font-size: 22px; letter-spacing: -0.02em; }
       h3{ margin: 0; font-size: 18px; }
-      .note{ margin: 0; color: rgba(255,255,255,0.70); line-height: 1.6; max-width: 92ch; }
 
-      .grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 14px; }
+      .note{
+        margin: 0;
+        color: rgba(255,255,255,0.70);
+        line-height: 1.6;
+      }
+
+      .grid{
+        display:grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+
       .tile{
         border: 1px solid rgba(255,255,255,0.12);
         border-radius: 18px;
         padding: 16px;
         background: rgba(255,255,255,0.03);
       }
-      .tile p{ margin: 10px 0 0; color: rgba(255,255,255,0.72); line-height: 1.6; }
 
-      .tileTop{ display:flex; align-items:center; justify-content:space-between; gap: 10px; }
+      .tile p{
+        margin: 10px 0 0;
+        color: rgba(255,255,255,0.72);
+        line-height: 1.6;
+      }
+
+      .tileTop{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap: 10px;
+      }
+
       .chip{
         padding: 6px 10px;
         border-radius: 999px;
@@ -370,19 +291,17 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
         font-size: 12px;
       }
 
-      .tileCta{ display:flex; gap: 10px; flex-wrap:wrap; margin-top: 14px; }
-
-      .pills{ display:flex; flex-wrap:wrap; gap: 10px; margin-top: 12px; }
-      .pill2{
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.14);
-        background: rgba(255,255,255,0.03);
-        color: rgba(255,255,255,0.78);
-        font-size: 13px;
+      .chip.soft{
+        border-color: rgba(255,255,255,0.16);
+        background: rgba(255,255,255,0.04);
       }
 
-      .final{ margin-bottom: 28px; }
+      .tileCta{
+        display:flex;
+        gap: 10px;
+        flex-wrap:wrap;
+        margin-top: 14px;
+      }
 
       /* Footer */
       .footer{
@@ -390,15 +309,22 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
         background: rgba(7,10,15,0.35);
         backdrop-filter: blur(10px);
       }
-      .foot{ display:flex; justify-content:space-between; gap:12px; padding: 16px 18px; flex-wrap:wrap; }
+
+      .foot{
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        padding: 16px 18px;
+        flex-wrap:wrap;
+      }
+
       .muted{ color: rgba(255,255,255,0.55); }
 
-      @media (max-width: 900px){
-        .heroGrid{ grid-template-columns: 1fr; }
-        h1{ font-size: 44px; }
-        .heroRight{ display:none; }
+      @media (max-width: 980px){
         .grid{ grid-template-columns: 1fr; }
+        h1{ font-size: 44px; }
       }
+
       @media (max-width: 820px){
         .links{ display:none; }
         .mobileJoin{ display:inline-flex; }
