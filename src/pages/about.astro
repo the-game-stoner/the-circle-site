@@ -1,6 +1,6 @@
 ---
 const SITE_NAME = "The-Circle";
-const DISCORD_INVITE = "https://discord.gg/YOURINVITECODE"; // <-- replace this
+const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
 ---
 
 <html lang="en">
@@ -8,21 +8,20 @@ const DISCORD_INVITE = "https://discord.gg/YOURINVITECODE"; // <-- replace this
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>About • {SITE_NAME}</title>
-    <meta name="description" content="What The-Circle is, who it’s for, and how it works." />
+    <meta name="description" content="The-Circle is a brand. Discord and Fantasy are the products." />
   </head>
 
   <body>
     <header class="top">
       <div class="container nav">
-        <a class="brand" href="/">
-          <span class="dot"></span>
-          <span>{SITE_NAME}</span>
-        </a>
-
+        <a class="brand" href="/"><span class="mark"></span><span>{SITE_NAME}</span></a>
         <nav class="links">
-          <a href="/">Home</a>
-          <a class="pill" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join Discord</a>
+          <a href="/discord">Discord</a>
+          <a href="/fantasy">Fantasy</a>
+          <a href="/rules">Rules</a>
+          <a class="pill" href="/join">Join</a>
         </nav>
+        <a class="pill mobileJoin" href="/join">Join</a>
       </div>
     </header>
 
@@ -30,141 +29,73 @@ const DISCORD_INVITE = "https://discord.gg/YOURINVITECODE"; // <-- replace this
       <section class="card">
         <h1>About {SITE_NAME}</h1>
         <p class="lead">
-          {SITE_NAME} is a Discord that isn’t centered around a product, a creator, or one specific game.
-          It exists for one reason: to be a reliable place you can drop into when you want company.
+          The-Circle is the brand. The Discord and the Fantasy hub are the products.
+          The whole point is simple: a clean, reliable place to show up when you want people around.
         </p>
 
         <div class="grid">
           <div class="tile">
-            <h2>Who it’s for</h2>
+            <h2>What we’re building</h2>
             <ul>
-              <li>People who are on Discord a lot and want a chill “home base”</li>
-              <li>Anyone who wants to chat, game, or watch something without pressure</li>
-              <li>Folks who prefer smaller servers that feel human</li>
+              <li><strong>Discord:</strong> a drop-in hangout that’s set up well and easy to use</li>
+              <li><strong>Fantasy:</strong> a league home base (tools, rules, trash talk, season stuff)</li>
+              <li>Everything under one brand that stays consistent</li>
             </ul>
           </div>
 
           <div class="tile">
-            <h2>Who it’s not for</h2>
+            <h2>What we’re not</h2>
             <ul>
-              <li>Drama farming, harassment, or being weird to people</li>
-              <li>Spammy self-promo servers</li>
-              <li>“Be active every day or else” communities</li>
+              <li>Not a product promo server</li>
+              <li>Not a creator “fan server”</li>
+              <li>Not a drama farm or dating server</li>
             </ul>
           </div>
         </div>
 
-        <h2>What makes it different</h2>
+        <h2>Where to start</h2>
         <p class="text">
-          A lot of “friends servers” are chaotic and half-built. A lot of big servers are loud and impersonal.
-          The-Circle is set up intentionally — clean channels, solid moderation, good voice quality, and optional private rooms —
-          so it’s actually usable as a hangout.
+          Most people start in Discord. If you’re just looking for a place to talk, game, watch stuff, or vibe in voice,
+          that’s the easiest entry point.
         </p>
 
         <div class="cta">
-          <a class="btn primary" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join the Discord</a>
-          <a class="btn ghost" href="/">Back to Home</a>
+          <a class="btn primary" href="/discord">Go to Discord page</a>
+          <a class="btn ghost" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join Discord</a>
         </div>
       </section>
     </main>
 
     <style>
-      :global(body){
-        margin:0;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        color: rgba(255,255,255,.92);
-        background:
-          radial-gradient(900px 500px at 15% 10%, rgba(120,170,255,.22), transparent 60%),
-          radial-gradient(800px 450px at 85% 15%, rgba(140,255,190,.16), transparent 55%),
-          radial-gradient(700px 450px at 55% 95%, rgba(255,170,120,.12), transparent 55%),
-          #0b0f14;
-      }
-      a{ color: inherit; text-decoration: none; }
-      .container{ max-width: 980px; margin: 0 auto; padding: 0 18px; }
-
-      .top{
-        position: sticky;
-        top: 0;
-        backdrop-filter: blur(10px);
-        background: rgba(11,15,20,.55);
-        border-bottom: 1px solid rgba(255,255,255,.10);
-        z-index: 10;
-      }
-      .nav{
-        display:flex;
-        align-items:center;
-        justify-content: space-between;
-        padding: 14px 18px;
-      }
-      .brand{
-        display:flex;
-        gap:10px;
-        align-items:center;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
-      .dot{
-        width: 10px; height: 10px; border-radius: 999px;
-        background: rgba(255,255,255,.85);
-        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
-      }
-      .links{ display:flex; gap:14px; align-items:center; }
-      .links a{ color: rgba(255,255,255,.78); font-size: 14px; }
-      .links a:hover{ color: rgba(255,255,255,.95); }
-      .pill{
-        padding: 10px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,.14);
-        background: rgba(255,255,255,.06);
-        color: rgba(255,255,255,.92) !important;
-      }
-
-      .card{
-        margin: 28px 0;
-        border: 1px solid rgba(255,255,255,.12);
-        background: rgba(255,255,255,.06);
-        border-radius: 18px;
-        padding: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,.45);
-      }
-      h1{ margin: 0 0 10px; font-size: 34px; letter-spacing: -0.02em; }
-      h2{ margin: 18px 0 8px; font-size: 18px; }
-      .lead{ color: rgba(255,255,255,.72); font-size: 17px; line-height: 1.6; max-width: 75ch; }
-      .text{ color: rgba(255,255,255,.72); line-height: 1.6; }
-
-      .grid{
-        display:grid;
-        grid-template-columns: repeat(2, minmax(0,1fr));
-        gap: 12px;
-        margin-top: 14px;
-      }
-      .tile{
-        border: 1px solid rgba(255,255,255,.12);
-        border-radius: 14px;
-        padding: 14px;
-        background: rgba(255,255,255,.03);
-      }
-      ul{ margin: 8px 0 0 18px; color: rgba(255,255,255,.70); line-height: 1.55; }
-
-      .cta{ display:flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
-      .btn{
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        padding: 12px 16px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,.14);
-        background: rgba(255,255,255,.04);
-        box-shadow: 0 8px 25px rgba(0,0,0,.22);
-        transition: transform .12s ease, background .12s ease;
-      }
-      .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
-      .btn.primary{ background: rgba(255,255,255,.12); }
-      .btn.ghost{ background: rgba(255,255,255,.03); }
-
-      @media (max-width: 720px){
-        .grid{ grid-template-columns: 1fr; }
-      }
+      :global(body){margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:rgba(255,255,255,.92);
+      background:radial-gradient(900px 500px at 15% 10%, rgba(9,255,3,.14), transparent 60%),
+      radial-gradient(800px 450px at 85% 15%, rgba(120,170,255,.18), transparent 55%),
+      radial-gradient(700px 450px at 55% 95%, rgba(255,170,120,.10), transparent 55%), #070a0f;}
+      a{color:inherit;text-decoration:none}
+      .container{max-width:1020px;margin:0 auto;padding:0 18px}
+      .top{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);background:rgba(7,10,15,.55);border-bottom:1px solid rgba(255,255,255,.10)}
+      .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;gap:14px}
+      .brand{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:-0.02em;white-space:nowrap}
+      .mark{width:12px;height:12px;border-radius:999px;background:#09ff03;box-shadow:0 0 0 6px rgba(9,255,3,.12), 0 0 28px rgba(9,255,3,.25)}
+      .links{display:flex;gap:14px;align-items:center}
+      .links a{color:rgba(255,255,255,.78);font-size:14px}
+      .links a:hover{color:rgba(255,255,255,.95)}
+      .pill{padding:10px 12px;border-radius:999px;border:1px solid rgba(9,255,3,.24);background:rgba(9,255,3,.10);color:rgba(255,255,255,.95)!important}
+      .mobileJoin{display:none}
+      .card{margin:28px 0;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:18px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+      h1{margin:0 0 10px;font-size:34px;letter-spacing:-0.02em}
+      h2{margin:18px 0 8px;font-size:18px}
+      .lead{color:rgba(255,255,255,.72);font-size:17px;line-height:1.6;max-width:78ch}
+      .text{color:rgba(255,255,255,.72);line-height:1.6}
+      .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+      .tile{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;background:rgba(255,255,255,.03)}
+      ul{margin:8px 0 0 18px;color:rgba(255,255,255,.72);line-height:1.6}
+      .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+      .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);box-shadow:0 8px 25px rgba(0,0,0,.22);transition:transform .12s ease, background .12s ease}
+      .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.07)}
+      .btn.primary{border-color:rgba(9,255,3,.22);background:rgba(9,255,3,.10)}
+      .btn.ghost{background:rgba(255,255,255,.03)}
+      @media (max-width:820px){.links{display:none}.mobileJoin{display:inline-flex}.grid{grid-template-columns:1fr}}
     </style>
   </body>
 </html>
