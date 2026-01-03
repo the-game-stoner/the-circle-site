@@ -7,10 +7,10 @@ const SITE_NAME = "The-Circle";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Fantasy • {SITE_NAME}</title>
+    <title>Fantasy League • {SITE_NAME}</title>
     <meta
       name="description"
-      content="The-Circle Fantasy: a clean home base for leagues — rules, season info, trash talk, and tools."
+      content="The-Circle private fantasy league hub: teams, history, rules, and applications."
     />
   </head>
 
@@ -37,43 +37,44 @@ const SITE_NAME = "The-Circle";
 
       <main class="container">
         <section class="card">
-          <h1>The-Circle League</h1>
+          <h1>The-Circle Fantasy League</h1>
 
           <p class="lead">
-            The goal is a clean home base for leagues: rules, season info, standings, and a place for trash talk that isn’t a cluttered mess.
-            This is the Fantasy side of The-Circle — separate from the Discord.
+            This is a <strong>private league hub</strong> for the league I run — not a public “Yahoo-style” platform.
+            Everything lives here: teams, owners, history, and rules/settings.
           </p>
+
+          <div class="cta">
+            <a class="btn primary" href="/league/apply">Apply to join the league</a>
+            <a class="btn ghost" href="/league/teams">Teams & owners</a>
+            <a class="btn ghost" href="/league/history">League history / records</a>
+            <a class="btn ghost" href="/league/rules">Rules & settings</a>
+          </div>
 
           <div class="grid">
             <div class="tile">
-              <h2>League hub</h2>
-              <p>One place for rules, schedules, payouts, and season notes.</p>
+              <h2>Teams</h2>
+              <p>See current teams, owners, and logos.</p>
             </div>
 
             <div class="tile">
-              <h2>Trash talk board</h2>
-              <p>Keep it fun, keep it readable, and keep it in one spot.</p>
+              <h2>History</h2>
+              <p>Past standings, champions, last place, and records.</p>
             </div>
 
             <div class="tile">
-              <h2>Tools (coming)</h2>
-              <p>Draft helpers, keeper notes, rivalries, weekly summaries.</p>
+              <h2>Rules</h2>
+              <p>League settings, scoring, payouts, and how we run it.</p>
             </div>
 
             <div class="tile">
-              <h2>Not Yahoo 2.0</h2>
-              <p>We’re not rebuilding the whole platform — we’re building a better home for your league.</p>
+              <h2>Applications</h2>
+              <p>Request a spot if one opens up. No spam — just the league.</p>
             </div>
-          </div>
-
-          <div class="cta">
-            <a class="btn primary" href="/apply">Apply for a team</a>
-            <a class="btn ghost" href="/blog">Read updates</a>
-            <a class="btn ghost" href="/rules">Rules</a>
           </div>
 
           <p class="fine">
-            Applications are coming. For now, the Fantasy hub is being built out — posts about progress will be in the blog.
+            If you’re a current member, this is your home base. If you’re not, the application is how you get considered when a spot opens.
           </p>
         </section>
       </main>
@@ -150,25 +151,9 @@ const SITE_NAME = "The-Circle";
       h1 { margin: 0 0 10px; font-size: 34px; letter-spacing: -0.02em; }
       h2 { margin: 0 0 6px; font-size: 18px; }
 
-      .lead { color: rgba(255,255,255,0.72); font-size: 17px; line-height: 1.6; max-width: 78ch; }
+      .lead { color: rgba(255,255,255,0.72); font-size: 17px; line-height: 1.6; max-width: 82ch; }
 
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 14px;
-      }
-
-      .tile {
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 16px;
-        padding: 16px;
-        background: rgba(255,255,255,0.03);
-      }
-
-      .tile p { margin: 0; color: rgba(255,255,255,0.72); line-height: 1.55; }
-
-      .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+      .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
 
       .btn {
         display: inline-flex;
@@ -185,6 +170,22 @@ const SITE_NAME = "The-Circle";
       .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.07); }
       .btn.primary { border-color: rgba(9,255,3,0.22); background: rgba(9,255,3,0.10); }
       .btn.ghost { background: rgba(255,255,255,0.03); }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .tile {
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px;
+        padding: 16px;
+        background: rgba(255,255,255,0.03);
+      }
+
+      .tile p { margin: 0; color: rgba(255,255,255,0.72); line-height: 1.55; }
 
       .fine { margin-top: 14px; color: rgba(255,255,255,0.55); font-size: 13px; }
 
