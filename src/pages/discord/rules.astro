@@ -1,0 +1,344 @@
+---
+const SITE_NAME = "The-Circle";
+const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Discord Rules • {SITE_NAME}</title>
+    <meta
+      name="description"
+      content="The-Circle Discord rules and moderation policy."
+    />
+  </head>
+
+  <body>
+    <div class="page">
+      <header class="top">
+        <div class="container nav">
+          <a class="brand" href="/">
+            <span class="mark" aria-hidden="true"></span>
+            <span>{SITE_NAME}</span>
+          </a>
+
+          <nav class="links">
+            <a href="/">Home</a>
+            <a href="/discord">Discord</a>
+            <a href="/league">League</a>
+            <a href="/about">About</a>
+            <a class="pill" href="/join">Join</a>
+          </nav>
+
+          <a class="pill mobileJoin" href="/join">Join</a>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="hero">
+          <div class="welcome">
+            <h1>Discord Rules</h1>
+
+            <p class="sub">
+              To make sure everyone has a great time, please take a moment to read our community guidelines.
+              Breaking these rules may result in a warning, mute, kick, or ban.
+            </p>
+
+            <div class="cta">
+              <a class="btn primary" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join Discord</a>
+              <a class="btn ghost" href="/discord">Back to Discord</a>
+            </div>
+
+            <p class="fine">
+              This server is built to be chill. If something starts turning into drama, step back.
+            </p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Community guidelines</h2>
+
+          <div class="stack">
+            <div class="ruleBlock">
+              <h3>Be respectful</h3>
+              <p>Treat everyone with kindness. No harassment, hate speech, or personal attacks.</p>
+            </div>
+
+            <div class="ruleBlock">
+              <h3>Keep it friendly</h3>
+              <p>
+                Avoid controversial topics like politics or religion, or anything that sparks arguments.
+                This is a place to relax and have fun — keep those conversations elsewhere.
+              </p>
+            </div>
+
+            <div class="ruleBlock">
+              <h3>No drama or arguments</h3>
+              <p>
+                If a conversation starts getting heated, step back.
+                Don’t argue or try to “win” debates.
+              </p>
+            </div>
+
+            <div class="ruleBlock">
+              <h3>Appropriate content only</h3>
+              <p>
+                No NSFW or illegal content, and no hateful or deliberately offensive language.
+                Keep things comfortable for everyone.
+              </p>
+            </div>
+
+            <div class="ruleBlock">
+              <h3>Respect privacy</h3>
+              <p>Do not share personal information — yours or anyone else’s.</p>
+            </div>
+
+            <div class="ruleBlock">
+              <h3>Follow channel topics</h3>
+              <p>Post in the correct channels. Off-topic content belongs in designated areas.</p>
+            </div>
+
+            <div class="ruleBlock">
+              <h3>No spamming or self-promotion</h3>
+              <p>Avoid spam, excessive links, or unsolicited advertising.</p>
+            </div>
+
+            <div class="ruleBlock">
+              <h3>Listen to staff</h3>
+              <p>
+                Staff decisions are final. If you have concerns, contact them respectfully.
+              </p>
+            </div>
+
+            <div class="ruleBlock">
+              <h3>Have fun</h3>
+              <p>Be positive, chill, and enjoy your time here.</p>
+            </div>
+          </div>
+
+          <p class="fine">
+            If you have any questions, feel free to ask a moderator — we’re here to help.
+          </p>
+        </section>
+
+        <section class="card">
+          <h2>Punishments</h2>
+
+          <p class="note">
+            Moderation exists to keep the server enjoyable for everyone, not to punish people unnecessarily.
+            Most issues start with a warning.
+          </p>
+
+          <div class="ruleBlock">
+            <ul>
+              <li><strong>Every rule-breaking message:</strong> deleted + warning.</li>
+              <li><strong>3 warnings in 30 minutes:</strong> 2 hour temporary mute.</li>
+              <li><strong>5 warnings in 1 day:</strong> 30 day temporary ban.</li>
+              <li><strong>7 warnings in 7 days:</strong> permanent ban.</li>
+            </ul>
+
+            <p class="note">
+              Staff may issue warnings for behavior not explicitly listed if it goes against the
+              community’s spirit or safety.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container foot">
+          <span>© {new Date().getFullYear()} {SITE_NAME}</span>
+          <span class="muted">Discord rules</span>
+        </div>
+      </footer>
+    </div>
+
+    <style is:global>
+      html, body { height: 100%; }
+
+      body{
+        margin:0;
+        min-height:100vh;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: rgba(255,255,255,0.92);
+
+        background-image:
+          radial-gradient(900px 500px at 15% 10%, rgba(9,255,3,0.14), transparent 60%),
+          radial-gradient(800px 450px at 85% 15%, rgba(120,170,255,0.18), transparent 55%),
+          radial-gradient(700px 450px at 55% 95%, rgba(255,170,120,0.10), transparent 55%),
+          linear-gradient(#070a0f, #070a0f);
+
+        background-repeat:no-repeat;
+        background-size:100% 100%;
+        background-attachment:fixed;
+      }
+
+      a{ color:inherit; text-decoration:none; }
+      .container{ max-width: 1020px; margin: 0 auto; padding: 0 18px; }
+
+      .page{ min-height:100vh; display:flex; flex-direction:column; }
+      main{ flex:1; }
+
+      .top{
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        background: rgba(7,10,15,0.55);
+        border-bottom: 1px solid rgba(255,255,255,0.10);
+      }
+
+      .nav{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:14px 18px;
+        gap:14px;
+      }
+
+      .brand{
+        display:flex;
+        gap:10px;
+        align-items:center;
+        font-weight:800;
+        letter-spacing:-0.02em;
+        white-space:nowrap;
+      }
+
+      .mark{
+        width:12px;
+        height:12px;
+        border-radius:999px;
+        background:#09ff03;
+        box-shadow:
+          0 0 0 6px rgba(9,255,3,0.12),
+          0 0 28px rgba(9,255,3,0.25);
+      }
+
+      .links{ display:flex; gap:14px; align-items:center; }
+      .links a{ color: rgba(255,255,255,0.78); font-size:14px; }
+      .links a:hover{ color: rgba(255,255,255,0.95); }
+
+      .pill{
+        padding:10px 12px;
+        border-radius:999px;
+        border: 1px solid rgba(9,255,3,0.24);
+        background: rgba(9,255,3,0.10);
+        color: rgba(255,255,255,0.95);
+      }
+
+      .mobileJoin{ display:none; }
+
+      .hero{ padding: 34px 0 10px; }
+
+      .welcome{
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 22px;
+        background: rgba(255,255,255,0.06);
+        box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+        padding: 22px;
+      }
+
+      h1{ margin:0 0 10px; font-size: 40px; letter-spacing: -0.03em; }
+      h2{ margin:0 0 10px; font-size: 22px; letter-spacing: -0.02em; }
+      h3{ margin:0 0 6px; font-size: 16px; }
+
+      .sub{
+        margin: 0;
+        color: rgba(255,255,255,0.74);
+        font-size: 16px;
+        line-height: 1.7;
+        max-width: 92ch;
+      }
+
+      .note{
+        margin: 8px 0 0;
+        color: rgba(255,255,255,0.70);
+        line-height: 1.6;
+        max-width: 92ch;
+      }
+
+      .fine{
+        margin-top: 12px;
+        color: rgba(255,255,255,0.55);
+        font-size: 13px;
+      }
+
+      .cta{
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+        margin-top: 14px;
+      }
+
+      .btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding: 12px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.04);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+        transition: transform .14s ease, background .14s ease;
+      }
+
+      .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.07); }
+      .btn.primary{ border-color: rgba(9,255,3,0.22); background: rgba(9,255,3,0.10); }
+      .btn.ghost{ background: rgba(255,255,255,0.03); }
+
+      .card{
+        margin: 18px 0;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      }
+
+      .stack{ display:grid; gap: 12px; margin-top: 12px; }
+
+      .ruleBlock{
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 18px;
+        padding: 16px;
+        background: rgba(255,255,255,0.03);
+      }
+
+      .ruleBlock p{ margin:0; color: rgba(255,255,255,0.72); line-height: 1.6; }
+
+      ul{
+        margin: 10px 0 0;
+        padding-left: 18px;
+        color: rgba(255,255,255,0.78);
+        line-height: 1.65;
+      }
+
+      li{ margin: 6px 0; }
+      strong{ color: rgba(255,255,255,0.92); }
+
+      .footer{
+        border-top: 1px solid rgba(255,255,255,0.10);
+        background: rgba(7,10,15,0.35);
+        backdrop-filter: blur(10px);
+      }
+
+      .foot{
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        padding: 16px 18px;
+        flex-wrap:wrap;
+      }
+
+      .muted{ color: rgba(255,255,255,0.55); }
+
+      @media (max-width: 820px){
+        .links{ display:none; }
+        .mobileJoin{ display:inline-flex; }
+      }
+    </style>
+  </body>
+</html>
