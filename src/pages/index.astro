@@ -8,7 +8,7 @@ const SITE_NAME = "The-Circle";
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{SITE_NAME}</title>
-  <link rel="icon" href="/favicon.png" type="image/svg+xml">
+    <link rel="icon" href="/favicon.png" type="image/svg+xml">
     <meta
       name="description"
       content="Welcome to The-Circle — a chill place to hang out, game, talk, and spend time with people."
@@ -20,7 +20,11 @@ const SITE_NAME = "The-Circle";
       <header class="top">
         <div class="container nav">
           <a class="brand" href="/">
-            <span class="mark" aria-hidden="true"></span>
+            <img
+              src="/favicon.png"
+              alt=""
+              class="logo"
+            />
             <span class="name">{SITE_NAME}</span>
           </a>
 
@@ -159,14 +163,10 @@ const SITE_NAME = "The-Circle";
         white-space:nowrap;
       }
 
-      .mark{
-        width:12px;
-        height:12px;
-        border-radius:999px;
-        background:#09ff03;
-        box-shadow:
-          0 0 0 6px rgba(9,255,3,0.12),
-          0 0 28px rgba(9,255,3,0.25);
+      .logo{
+        width:22px;
+        height:22px;
+        display:block;
       }
 
       .links{ display:flex; gap:14px; align-items:center; }
