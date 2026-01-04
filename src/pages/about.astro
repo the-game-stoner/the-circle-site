@@ -20,7 +20,10 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
     <div class="page">
       <header class="top">
         <div class="container nav">
-          <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>{SITE_NAME}</span></a>
+          <a class="brand" href="/">
+            <img class="mark" src="/favicon.png" alt="The-Circle" />
+            <span>{SITE_NAME}</span>
+          </a>
           <nav class="links">
             <a href="/">Home</a>
             <a href="/discord">Discord</a>
@@ -157,13 +160,7 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
         white-space:nowrap;
       }
 
-      .mark{
-        width:12px;
-        height:12px;
-        border-radius:999px;
-        background:#09ff03;
-        box-shadow:0 0 0 6px rgba(9,255,3,0.12), 0 0 28px rgba(9,255,3,0.25);
-      }
+      .mark{width:28px;height:28px;display:block;flex:0 0 28px;object-fit:contain;border-radius:0; /* important: don't force a dot */background:transparent;box-shadow:none;filter: drop-shadow(0 6px 16px rgba(9,255,3,0.25));}
 
       .links{ display:flex; gap:14px; align-items:center; }
       .links a{ color:rgba(255,255,255,0.78); font-size:14px; }
