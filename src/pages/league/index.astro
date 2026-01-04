@@ -1,6 +1,5 @@
 ---
 const SITE_NAME = "The-Circle";
-const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
 ---
 
 <!DOCTYPE html>
@@ -8,8 +7,11 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Apply • League • {SITE_NAME}</title>
-    <meta name="description" content="Apply to join The-Circle League." />
+    <title>League • {SITE_NAME}</title>
+    <meta
+      name="description"
+      content="The-Circle League — a private fantasy football home base for teams, history, rules, and applications."
+    />
   </head>
 
   <body>
@@ -17,6 +19,7 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
       <header class="top">
         <div class="container nav">
           <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>{SITE_NAME}</span></a>
+
           <nav class="links">
             <a href="/">Home</a>
             <a href="/league">League</a>
@@ -30,62 +33,91 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
           <div class="heroCard">
             <div class="heroTop">
               <span class="kicker">The-Circle League</span>
-              <a class="mini" href="/league">← Back to League Hub</a>
+              <span class="mini">Private league home base</span>
             </div>
 
-            <h1>Apply to join</h1>
-
+            <h1>League hub</h1>
             <p class="lead">
-              The league is private. When a spot opens up, this is the official way to apply.
-              If there’s no opening, applications go to the waitlist.
+              This is the home base for the league: teams, history, rules/settings, and applications when a spot opens.
+              Built to stay clean, readable, and easy to use.
             </p>
 
-            <div class="heroCta">
-              <a class="btn primary" href={FORM_URL} target="_blank" rel="noreferrer">Open application form</a>
+            <div class="cta">
+              <a class="btn primary" href="/league/teams">Teams & owners</a>
+              <a class="btn ghost" href="/league/history">History / records</a>
               <a class="btn ghost" href="/league/rules">Rules & settings</a>
-              <a class="btn ghost" href="/league/history">History</a>
+              <a class="btn ghost" href="/league/apply">Apply to join</a>
             </div>
 
             <p class="fine">
-              Opens in a new tab. Takes about 1–2 minutes.
+              Not public. Not a platform. Just our league.
             </p>
           </div>
         </section>
 
         <section class="card">
-          <div class="grid">
-            <div class="tile">
-              <h2>What we look for</h2>
-              <ul>
-                <li><strong>Active managers</strong> (set lineups, respond, show up)</li>
-                <li><strong>Good vibes</strong> (trash talk is fine — drama isn’t)</li>
-                <li><strong>League-first</strong> (no collusion, no weird stuff)</li>
-              </ul>
-            </div>
+          <h2>What’s inside</h2>
+          <p class="note">Quick links to the stuff that actually matters.</p>
 
-            <div class="tile">
-              <h2>Before you apply</h2>
-              <ul>
-                <li>Skim the <a class="inline" href="/league/rules">rules & settings</a>.</li>
-                <li>Read the league history if you want the vibe: <a class="inline" href="/league/history">history</a>.</li>
-                <li>If accepted, you’ll be contacted using the info you provide in the form.</li>
-              </ul>
-            </div>
+          <div class="grid">
+            <article class="tile">
+              <div class="tileTop">
+                <h3>Teams & owners</h3>
+                <span class="chip">Live</span>
+              </div>
+              <p>
+                Current teams, owners, and (optionally) logos.
+              </p>
+              <div class="tileCta">
+                <a class="btn primary" href="/league/teams">Open teams</a>
+              </div>
+            </article>
+
+            <article class="tile">
+              <div class="tileTop">
+                <h3>History / records</h3>
+                <span class="chip">Live</span>
+              </div>
+              <p>
+                Past seasons: 1st, 2nd, last place + records we care about.
+              </p>
+              <div class="tileCta">
+                <a class="btn primary" href="/league/history">View history</a>
+              </div>
+            </article>
+
+            <article class="tile">
+              <div class="tileTop">
+                <h3>Rules & settings</h3>
+                <span class="chip">Live</span>
+              </div>
+              <p>
+                League rules, policies, roster settings, and scoring.
+              </p>
+              <div class="tileCta">
+                <a class="btn primary" href="/league/rules">Read rules</a>
+              </div>
+            </article>
+
+            <article class="tile">
+              <div class="tileTop">
+                <h3>Apply to join</h3>
+                <span class="chip soft">Waitlist</span>
+              </div>
+              <p>
+                When a spot opens, this is the official way to apply.
+              </p>
+              <div class="tileCta">
+                <a class="btn primary" href="/league/apply">Apply</a>
+              </div>
+            </article>
           </div>
 
           <div class="callout">
-            <div class="calloutHead">
-              <h2>What happens next</h2>
-              <span class="chip">Simple</span>
-            </div>
-
+            <h2>Coming later</h2>
             <p class="text">
-              Applications are reviewed by the commissioner. If a spot is available, you’ll be reached out to directly.
-              If not, the application stays on the waitlist until the next opening.
-            </p>
-
-            <p class="fine">
-              Tip: the fastest way to get picked is to be consistent, fair, and actually care about the league.
+              Extras like weekly recaps, rivalry stats, trophies, and a cleaner “season overview” page.
+              Only adding things that help the league — no clutter.
             </p>
           </div>
         </section>
@@ -119,10 +151,11 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
         background-attachment:fixed;
       }
 
-      .page{min-height:100vh;display:flex;flex-direction:column}
-      main{flex:1}
-      a{color:inherit;text-decoration:none}
-      .container{max-width:1020px;margin:0 auto;padding:0 18px}
+      a{ color:inherit; text-decoration:none; }
+      .container{ max-width:1020px; margin:0 auto; padding:0 18px; }
+
+      .page{ min-height:100vh; display:flex; flex-direction:column; }
+      main{ flex:1; }
 
       /* Top nav */
       .top{
@@ -157,12 +190,13 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
         box-shadow:0 0 0 6px rgba(9,255,3,0.12), 0 0 28px rgba(9,255,3,0.25);
       }
 
-      .links{display:flex;gap:14px;align-items:center}
-      .links a{color:rgba(255,255,255,0.78);font-size:14px}
-      .links a:hover{color:rgba(255,255,255,0.95)}
+      .links{ display:flex; gap:14px; align-items:center; }
+      .links a{ color:rgba(255,255,255,0.78); font-size:14px; }
+      .links a:hover{ color:rgba(255,255,255,0.95); }
 
       /* Hero */
-      .hero{padding:28px 0 10px}
+      .hero{ padding:28px 0 10px; }
+
       .heroCard{
         border:1px solid rgba(255,255,255,0.12);
         background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
@@ -191,11 +225,7 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
         font-size:12px;
       }
 
-      .mini{
-        color:rgba(255,255,255,0.70);
-        font-size:14px;
-      }
-      .mini:hover{color:rgba(255,255,255,0.95)}
+      .mini{ color:rgba(255,255,255,0.70); font-size:14px; }
 
       h1{
         margin:0 0 10px;
@@ -205,21 +235,14 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
       }
 
       .lead{
+        margin:0;
         color:rgba(255,255,255,0.74);
         font-size:17px;
         line-height:1.7;
         max-width:92ch;
-        margin:0;
       }
 
-      .heroCta{
-        display:flex;
-        gap:12px;
-        flex-wrap:wrap;
-        margin-top:16px;
-      }
-
-      /* Shared cards */
+      /* Card */
       .card{
         margin:18px 0 28px;
         border:1px solid rgba(255,255,255,0.12);
@@ -229,10 +252,21 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
         box-shadow:0 20px 60px rgba(0,0,0,0.45);
       }
 
+      h2{ margin:0 0 8px; font-size:18px; }
+      h3{ margin:0; font-size:18px; }
+
+      .note{
+        margin:0;
+        color:rgba(255,255,255,0.70);
+        line-height:1.6;
+      }
+
+      /* Grid */
       .grid{
         display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
+        grid-template-columns:repeat(2, minmax(0,1fr));
         gap:12px;
+        margin-top:14px;
       }
 
       .tile{
@@ -242,49 +276,35 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
         background:rgba(255,255,255,0.03);
       }
 
-      h2{margin:0 0 8px;font-size:18px}
-      ul{margin:8px 0 0 18px;color:rgba(255,255,255,0.72);line-height:1.65}
-
-      .inline{
-        color:rgba(255,255,255,0.92);
-        text-decoration:underline;
-        text-underline-offset:3px;
-      }
-      .inline:hover{color:#fff}
-
-      .callout{
-        margin-top:14px;
-        border:1px solid rgba(255,255,255,0.12);
-        border-radius:16px;
-        padding:16px;
-        background:rgba(255,255,255,0.03);
-      }
-
-      .calloutHead{
+      .tileTop{
         display:flex;
         align-items:center;
         justify-content:space-between;
         gap:10px;
-        flex-wrap:wrap;
-        margin-bottom:8px;
+      }
+
+      .tile p{
+        margin:10px 0 0;
+        color:rgba(255,255,255,0.72);
+        line-height:1.6;
       }
 
       .chip{
         padding:6px 10px;
         border-radius:999px;
-        border:1px solid rgba(255,255,255,0.16);
-        background:rgba(255,255,255,0.04);
-        color:rgba(255,255,255,0.72);
+        border:1px solid rgba(9,255,3,0.20);
+        background:rgba(9,255,3,0.08);
+        color:rgba(255,255,255,0.82);
         font-size:12px;
       }
-
-      .text{color:rgba(255,255,255,0.72);line-height:1.7;margin:0}
-
-      .fine{
-        margin-top:10px;
-        color:rgba(255,255,255,0.55);
-        font-size:13px;
+      .chip.soft{
+        border-color:rgba(255,255,255,0.16);
+        background:rgba(255,255,255,0.04);
+        color:rgba(255,255,255,0.68);
       }
+
+      .tileCta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+      .cta{ display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
 
       /* Buttons */
       .btn{
@@ -298,9 +318,21 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
         box-shadow:0 8px 25px rgba(0,0,0,0.22);
         transition:transform .12s ease, background .12s ease;
       }
-      .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,0.07)}
-      .btn.primary{border-color:rgba(9,255,3,0.22);background:rgba(9,255,3,0.10)}
-      .btn.ghost{background:rgba(255,255,255,0.03)}
+      .btn:hover{ transform:translateY(-1px); background:rgba(255,255,255,0.07); }
+      .btn.primary{ border-color:rgba(9,255,3,0.22); background:rgba(9,255,3,0.10); }
+      .btn.ghost{ background:rgba(255,255,255,0.03); }
+
+      /* Callout */
+      .callout{
+        margin-top:14px;
+        border:1px solid rgba(255,255,255,0.12);
+        border-radius:16px;
+        padding:16px;
+        background:rgba(255,255,255,0.03);
+      }
+      .text{ margin:0; color:rgba(255,255,255,0.72); line-height:1.7; }
+
+      .fine{ margin-top:10px; color:rgba(255,255,255,0.55); font-size:13px; }
 
       /* Footer */
       .footer{
@@ -308,7 +340,6 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
         background:rgba(7,10,15,0.35);
         backdrop-filter:blur(10px);
       }
-
       .foot{
         display:flex;
         justify-content:space-between;
@@ -316,13 +347,12 @@ const FORM_URL = "https://forms.gle/vpF6Dt1a5rB6AFH68";
         padding:16px 18px;
         flex-wrap:wrap;
       }
-
-      .muted{color:rgba(255,255,255,0.55)}
+      .muted{ color:rgba(255,255,255,0.55); }
 
       @media (max-width: 820px){
-        .links{display:none}
-        .grid{grid-template-columns:1fr}
-        h1{font-size:34px}
+        .links{ display:none; }
+        .grid{ grid-template-columns:1fr; }
+        h1{ font-size:34px; }
       }
     </style>
   </body>
