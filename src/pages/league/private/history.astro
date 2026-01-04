@@ -62,7 +62,11 @@ const fmt = (n) => n.toFixed(2);
     <div class="page">
       <header class="top">
         <div class="container nav">
-          <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>{SITE_NAME}</span></a>
+          <img
+              src="/favicon.png"
+              alt=""
+              class="logo"
+            />
           <nav class="links">
             <a href="/">Home</a>
             <a href="/discord">Discord</a>
@@ -180,7 +184,11 @@ const fmt = (n) => n.toFixed(2);
       .top{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);background:rgba(7,10,15,0.55);border-bottom:1px solid rgba(255,255,255,0.10)}
       .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;gap:14px}
       .brand{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:-0.02em;white-space:nowrap}
-      .mark{width:12px;height:12px;border-radius:999px;background:#09ff03;box-shadow:0 0 0 6px rgba(9,255,3,0.12), 0 0 28px rgba(9,255,3,0.25)}
+      .logo{
+        width:30px;
+        height:30px;
+        display:block;
+      }
       .links{display:flex;gap:14px;align-items:center}
       .links a{color:rgba(255,255,255,0.78);font-size:14px}
       .links a:hover{color:rgba(255,255,255,0.95)}
