@@ -1,12 +1,51 @@
 ---
 const SITE_NAME = "The-Circle";
 
-/** Edit these later */
 const SEASONS = [
-  { year: 2025, first: "Team Alpha", second: "Team Beta", last: "Team Delta" },
-  { year: 2024, first: "Team Gamma", second: "Team Alpha", last: "Team Beta" },
-  { year: 2023, first: "Team Beta", second: "Team Delta", last: "Team Gamma" },
+  {
+    year: 2025,
+    rows: [
+      { rank: 1, team: "The Mud Dogs", record: "10-5-0", pf: 1993.46, pa: 1771.70, streak: "W-2", waiver: 7, moves: 20, playoff: true },
+      { rank: 2, team: "Slammy Sosa", record: "9-6-0", pf: 1908.20, pa: 1755.02, streak: "L-1", waiver: 8, moves: 31, playoff: true },
+      { rank: 3, team: "GiveYerBallzATug", record: "9-6-0", pf: 1826.00, pa: 1772.58, streak: "W-4", waiver: 4, moves: 13, playoff: true },
+      { rank: 4, team: "To Infinity and Bijan", record: "8-7-0", pf: 1905.84, pa: 1824.32, streak: "L-2", waiver: 5, moves: 12, playoff: true },
+      { rank: 5, team: "MFGA", record: "6-9-0", pf: 1631.74, pa: 1846.24, streak: "L-4", waiver: 6, moves: 12, playoff: false },
+      { rank: 6, team: "RolzOnShabbutz", record: "5-10-0", pf: 1706.10, pa: 1896.98, streak: "W-1", waiver: 3, moves: 12, playoff: false },
+      { rank: 7, team: "shiva's chosen", record: "6-9-0", pf: 1842.16, pa: 1860.52, streak: "W-1", waiver: 1, moves: 4, playoff: false },
+      { rank: 8, team: "Spank Bank", record: "7-8-0", pf: 1775.22, pa: 1861.36, streak: "L-1", waiver: 2, moves: 1, playoff: false },
+    ],
+  },
+  {
+    year: 2024,
+    rows: [
+      { rank: 1, team: "To Infinity and Bijan", record: "10-5-0", pf: 1984.38, pa: 1757.38, streak: "W-1", waiver: 2, moves: 14, playoff: true },
+      { rank: 2, team: "Manitoba MooseKnuckles", record: "8-7-0", pf: 1758.62, pa: 1728.22, streak: "W-1", waiver: 10, moves: 41, playoff: true },
+      { rank: 3, team: "Slammy Sosa", record: "8-7-0", pf: 1822.30, pa: 1800.34, streak: "W-2", waiver: 8, moves: 28, playoff: true },
+      { rank: 4, team: "The Mud Dogs", record: "11-4-0", pf: 1940.36, pa: 1798.52, streak: "W-4", waiver: 7, moves: 31, playoff: true },
+      { rank: 5, team: "MFGA", record: "6-9-0", pf: 1817.84, pa: 1919.02, streak: "L-2", waiver: 5, moves: 14, playoff: false },
+      { rank: 6, team: "RolzOnShabbutz", record: "6-9-0", pf: 1812.64, pa: 1908.90, streak: "L-3", waiver: 4, moves: 20, playoff: false },
+      { rank: 7, team: "shiva's chosen", record: "7-8-0", pf: 1853.42, pa: 1809.56, streak: "L-1", waiver: 6, moves: 19, playoff: false },
+      { rank: 8, team: "GiveYerBallzATug", record: "7-8-0", pf: 1778.56, pa: 1796.52, streak: "L-1", waiver: 9, moves: 18, playoff: false },
+      { rank: 9, team: "Spank Bank", record: "6-9-0", pf: 1770.06, pa: 1884.98, streak: "W-1", waiver: 3, moves: 5, playoff: false },
+      { rank: 10, team: "BRAVENZZZZZ", record: "6-9-0", pf: 1762.10, pa: 1896.84, streak: "L-1", waiver: 1, moves: 10, playoff: false },
+    ],
+  },
+  {
+    year: 2023,
+    rows: [
+      { rank: 1, team: "The Mud Dogs", record: "10-5-0", pf: 2014.32, pa: 1862.52, streak: "W-5", waiver: 2, moves: 18, playoff: true },
+      { rank: 2, team: "Spank Bank", record: "11-4-0", pf: 1921.00, pa: 1682.20, streak: "W-2", waiver: 3, moves: 6, playoff: true },
+      { rank: 3, team: "Slammy Sosa", record: "8-7-0", pf: 1988.64, pa: 1795.00, streak: "W-1", waiver: 5, moves: 24, playoff: true },
+      { rank: 4, team: "shiva's chosen", record: "10-5-0", pf: 1973.86, pa: 1841.92, streak: "L-1", waiver: 8, moves: 21, playoff: true },
+      { rank: 5, team: "Run CMC", record: "7-8-0", pf: 1727.68, pa: 1882.08, streak: "W-1", waiver: 7, moves: 10, playoff: false },
+      { rank: 6, team: "GiveYerBallzATug", record: "6-9-0", pf: 1629.40, pa: 1787.34, streak: "L-4", waiver: 6, moves: 13, playoff: false },
+      { rank: 7, team: "Alexander's Crazy Team", record: "6-9-0", pf: 1760.16, pa: 1899.32, streak: "L-1", waiver: 4, moves: 9, playoff: false },
+      { rank: 8, team: "Buster Hyman", record: "2-13-0", pf: 1628.92, pa: 1893.60, streak: "L-10", waiver: 1, moves: 4, playoff: false },
+    ],
+  },
 ];
+
+const fmt = (n) => n.toFixed(2);
 ---
 
 <!DOCTYPE html>
@@ -14,71 +53,107 @@ const SEASONS = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>History • Fantasy League • {SITE_NAME}</title>
-    <meta name="description" content="Past standings and records for The-Circle fantasy league." />
+    <title>History • League • {SITE_NAME}</title>
+    <meta name="description" content="Past standings and records for The-Circle League." />
   </head>
 
   <body>
     <div class="page">
       <header class="top">
         <div class="container nav">
-          <a class="brand" href="/"><span class="mark"></span><span>{SITE_NAME}</span></a>
+          <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>{SITE_NAME}</span></a>
           <nav class="links">
             <a href="/">Home</a>
             <a href="/discord">Discord</a>
             <a href="/league">League</a>
             <a href="/about">About</a>
-
           </nav>
-
         </div>
       </header>
 
       <main class="container">
         <section class="card">
           <div class="head">
-            <h1>League history / records</h1>
-            <a class="mini" href="/fantasy">← Back to Fantasy hub</a>
+            <h1>League history</h1>
+            <a class="mini" href="/league">← Back to League Hub</a>
           </div>
 
           <p class="lead">
-            Past results. Replace the placeholder teams with your real history.
+            Past standings by season. Top 4 teams are highlighted.
           </p>
 
-          <div class="tableWrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Season</th>
-                  <th>1st</th>
-                  <th>2nd</th>
-                  <th>Last</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SEASONS.map((s) => (
-                  <tr>
-                    <td class="year">{s.year}</td>
-                    <td><span class="badge win">{s.first}</span></td>
-                    <td><span class="badge">{s.second}</span></td>
-                    <td><span class="badge lose">{s.last}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div class="legend">
+            <span class="key"><span class="dot playoff"></span> Playoffs (Top 4)</span>
+            <span class="key"><span class="dot champ"></span> Champion (Rank 1)</span>
           </div>
+        </section>
 
+        {SEASONS.map((season) => (
+          <section class="card season">
+            <div class="seasonHead">
+              <h2>{season.year}</h2>
+              <span class="subtle">{season.rows.length} teams</span>
+            </div>
+
+            <div class="tableWrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="colPlace">Rank</th>
+                    <th>Team</th>
+                    <th class="num">W-L-T</th>
+                    <th class="num">PF</th>
+                    <th class="num">PA</th>
+                    <th class="num">Streak</th>
+                    <th class="num">Waiver</th>
+                    <th class="num">Moves</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {season.rows.map((r) => (
+                    <tr class={r.playoff ? "playoffRow" : ""}>
+                      <td class="place">{r.rank}</td>
+                      <td>
+                        <span class={"teamBadge " + (r.rank === 1 ? "champ" : r.playoff ? "playoff" : "")}>
+                          {r.team}
+                        </span>
+                      </td>
+                      <td class="num">{r.record}</td>
+                      <td class="num">{fmt(r.pf)}</td>
+                      <td class="num">{fmt(r.pa)}</td>
+                      <td class="num">
+                        <span class={"streak " + (r.streak.startsWith("W") ? "win" : "lose")}>{r.streak}</span>
+                      </td>
+                      <td class="num">{r.waiver}</td>
+                      <td class="num">{r.moves}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <p class="fine">
+              Later we can expand this into full stats: best records, most points, playoff appearances, and all-time totals.
+            </p>
+          </section>
+        ))}
+
+        <section class="card">
           <div class="cta">
             <a class="btn primary" href="/league/teams">Teams & owners</a>
             <a class="btn ghost" href="/league/rules">Rules & settings</a>
             <a class="btn ghost" href="/league/apply">Apply to join</a>
           </div>
-
-          <p class="fine">
-            Later we can expand this into full stats: best records, most points, playoff appearances, rivalry totals, etc.
-          </p>
         </section>
       </main>
+
+      <footer class="footer">
+        <div class="container foot">
+          <span>© {new Date().getFullYear()} {SITE_NAME}</span>
+          <span class="muted">League history</span>
+        </div>
+      </footer>
     </div>
 
     <style is:global>
@@ -96,10 +171,12 @@ const SEASONS = [
         background-size:100% 100%;
         background-attachment:fixed;
       }
+
       .page{min-height:100vh;display:flex;flex-direction:column}
       main{flex:1}
       a{color:inherit;text-decoration:none}
       .container{max-width:1020px;margin:0 auto;padding:0 18px}
+
       .top{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);background:rgba(7,10,15,0.55);border-bottom:1px solid rgba(255,255,255,0.10)}
       .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;gap:14px}
       .brand{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:-0.02em;white-space:nowrap}
@@ -107,25 +184,58 @@ const SEASONS = [
       .links{display:flex;gap:14px;align-items:center}
       .links a{color:rgba(255,255,255,0.78);font-size:14px}
       .links a:hover{color:rgba(255,255,255,0.95)}
-      .pill{padding:10px 12px;border-radius:999px;border:1px solid rgba(9,255,3,0.24);background:rgba(9,255,3,0.10);color:rgba(255,255,255,0.95)}
-      .mobileJoin{display:none}
-      .card{margin:28px 0;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);border-radius:18px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,0.45)}
+
+      .card{margin:18px 0;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);border-radius:18px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,0.45)}
       .head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
       .mini{color:rgba(255,255,255,0.70);font-size:14px}
       .mini:hover{color:rgba(255,255,255,0.95)}
-      h1{margin:0 0 10px;font-size:34px;letter-spacing:-0.02em}
-      .lead{color:rgba(255,255,255,0.72);font-size:17px;line-height:1.6;max-width:86ch;margin:0 0 14px}
+      h1{margin:0;font-size:34px;letter-spacing:-0.02em}
+      h2{margin:0;font-size:22px;letter-spacing:-0.02em}
+      .lead{color:rgba(255,255,255,0.72);font-size:17px;line-height:1.6;max-width:86ch;margin:10px 0 0}
+
+      .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+      .key{display:flex;gap:8px;align-items:center;color:rgba(255,255,255,0.70);font-size:13px}
+      .dot{width:10px;height:10px;border-radius:999px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.04)}
+      .dot.playoff{border-color:rgba(9,255,3,0.20);background:rgba(9,255,3,0.08)}
+      .dot.champ{border-color:rgba(255,215,120,0.28);background:rgba(255,215,120,0.10)}
+
+      .season{padding-top:18px}
+      .seasonHead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+      .subtle{color:rgba(255,255,255,0.55);font-size:13px}
+
       .tableWrap{overflow:auto;border:1px solid rgba(255,255,255,0.12);border-radius:16px;background:rgba(255,255,255,0.03)}
-      table{width:100%;border-collapse:collapse;min-width:560px}
+      table{width:100%;border-collapse:collapse;min-width:980px}
       th, td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.10);text-align:left}
       th{color:rgba(255,255,255,0.75);font-size:13px;letter-spacing:.02em}
       td{color:rgba(255,255,255,0.88)}
       tr:last-child td{border-bottom:none}
-      .year{font-weight:800}
-      .badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.03);font-size:13px}
-      .badge.win{border-color:rgba(9,255,3,0.26);background:rgba(9,255,3,0.08)}
-      .badge.lose{border-color:rgba(255,120,120,0.26);background:rgba(255,120,120,0.08)}
-      .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+      .colPlace{width:62px}
+      .place{font-weight:900}
+      .num{text-align:right;font-variant-numeric:tabular-nums}
+
+      .teamBadge{
+        display:inline-flex;align-items:center;
+        padding:6px 10px;border-radius:999px;
+        border:1px solid rgba(255,255,255,0.14);
+        background:rgba(255,255,255,0.03);
+        font-size:13px;
+      }
+      .teamBadge.playoff{border-color:rgba(9,255,3,0.22);background:rgba(9,255,3,0.08)}
+      .teamBadge.champ{border-color:rgba(255,215,120,0.30);background:rgba(255,215,120,0.12)}
+      .playoffRow td{background:rgba(9,255,3,0.03)}
+
+      .streak{
+        display:inline-flex;align-items:center;justify-content:center;
+        padding:6px 10px;border-radius:999px;
+        border:1px solid rgba(255,255,255,0.14);
+        background:rgba(255,255,255,0.03);
+        font-size:13px;
+        min-width:56px;
+      }
+      .streak.win{border-color:rgba(9,255,3,0.22);background:rgba(9,255,3,0.08)}
+      .streak.lose{border-color:rgba(255,120,120,0.26);background:rgba(255,120,120,0.08)}
+
+      .cta{display:flex;gap:12px;flex-wrap:wrap}
       .btn{
         display:inline-flex;align-items:center;justify-content:center;
         padding:12px 16px;border-radius:14px;border:1px solid rgba(255,255,255,0.14);
@@ -137,7 +247,21 @@ const SEASONS = [
       .btn.primary{border-color:rgba(9,255,3,0.22);background:rgba(9,255,3,0.10)}
       .btn.ghost{background:rgba(255,255,255,0.03)}
       .fine{margin-top:14px;color:rgba(255,255,255,0.55);font-size:13px}
-      @media (max-width:820px){.links{display:none}.mobileJoin{display:inline-flex}}
+
+      .footer{
+        border-top: 1px solid rgba(255,255,255,0.10);
+        background: rgba(7,10,15,0.35);
+        backdrop-filter: blur(10px);
+      }
+      .foot{
+        display:flex;justify-content:space-between;gap:12px;
+        padding:16px 18px;flex-wrap:wrap;
+      }
+      .muted{color:rgba(255,255,255,0.55)}
+
+      @media (max-width:820px){
+        .links{display:none}
+      }
     </style>
   </body>
 </html>
