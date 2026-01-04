@@ -11,7 +11,7 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
     <title>Discord • {SITE_NAME}</title>
     <meta
       name="description"
-      content="The-Circle Discord: a drop-in hangout built to be clean, usable, and low-pressure."
+      content="The-Circle Discord: a clean, low-pressure server for hanging out, voice, games, music, and movie nights."
     />
   </head>
 
@@ -20,7 +20,7 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
       <header class="top">
         <div class="container nav">
           <a class="brand" href="/">
-            <span class="mark"></span>
+            <span class="mark" aria-hidden="true"></span>
             <span>{SITE_NAME}</span>
           </a>
 
@@ -36,58 +36,146 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
       </header>
 
       <main class="container">
-        <section class="card">
-          <h1>The-Circle Discord</h1>
+        <section class="hero">
+          <div class="welcome">
+            <h1>The-Circle Discord</h1>
+            <p class="lead">
+              The purpose is simple: a reliable Discord you can drop into when you want people around.
+              Hang out, play something, watch a movie, listen to music, or just chill in voice — no pressure to be “active.”
+            </p>
 
-          <p class="lead">
-            A well-built Discord that exists for one reason: you can always drop in when you want people around.
-            Chat, voice, games, music, movies — no pressure to be “active.”
+            <div class="cta">
+              <a class="btn primary" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join Discord</a>
+              <a class="btn ghost" href="#features">See what’s different</a>
+              <a class="btn ghost" href="#how">How it works</a>
+            </div>
+
+            <p class="fine">
+              Lurking is fine. You don’t have to introduce yourself like it’s a job interview.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="features">
+          <h2>What makes it better than the average “friends server”</h2>
+          <p class="note">
+            Most servers are either huge + chaotic, or small + messy. This one is built to be clean, useful, and actually used.
           </p>
 
           <div class="grid">
-            <div class="tile">
-              <h2>Drop-in voice</h2>
-              <p>Hop in to talk, idle, or just hang out while you do your own thing.</p>
-            </div>
+            <article class="tile">
+              <h3>Drop-in voice</h3>
+              <p>Hop in to talk, idle, or just hang out while you’re doing your own thing.</p>
+            </article>
 
-            <div class="tile">
-              <h2>Game nights (casual)</h2>
-              <p>Find people to play with without the sweaty clan vibe.</p>
-            </div>
-
-            <div class="tile">
-              <h2>Movies / streams</h2>
+            <article class="tile">
+              <h3>Movies / streams</h3>
               <p>Watch together like a living room. Come and go whenever.</p>
+            </article>
+
+            <article class="tile">
+              <h3>Casual game nights</h3>
+              <p>Find people to play with without the sweaty clan vibe.</p>
+            </article>
+
+            <article class="tile">
+              <h3>Boosted quality</h3>
+              <p>Higher voice quality + better streaming options thanks to server boosts.</p>
+            </article>
+
+            <article class="tile">
+              <h3>Private voice channels (on demand)</h3>
+              <p>Spin up a private VC for your group when you want privacy — without killing the public vibe.</p>
+            </article>
+
+            <article class="tile">
+              <h3>Actually moderated</h3>
+              <p>MEE6 Pro + clean permissions + organized channels so it doesn’t turn into a cluttered junk drawer.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>The vibe</h2>
+
+          <div class="pills">
+            <span class="pill2">Drop-in energy</span>
+            <span class="pill2">Low pressure</span>
+            <span class="pill2">Organized channels</span>
+            <span class="pill2">Voice/stream boosted quality</span>
+            <span class="pill2">Private & clean</span>
+            <span class="pill2">Come & go</span>
+            <span class="pill2">Adult-friendly</span>
+            <span class="pill2">No drama</span>
+          </div>
+
+          <p class="note">
+            The goal isn’t to build a “community” that feels like homework. It’s to have a place that’s there when you need it.
+          </p>
+        </section>
+
+        <section class="card" id="how">
+          <h2>How it works</h2>
+
+          <div class="steps">
+            <div class="step">
+              <div class="num">1</div>
+              <div>
+                <h3>Join and lurk if you want</h3>
+                <p>No forced intros. No weird onboarding. Take your time.</p>
+              </div>
             </div>
 
-            <div class="tile">
-              <h2>Clean setup</h2>
-              <p>Organized channels, moderation, and voice quality that doesn’t feel scuffed.</p>
+            <div class="step">
+              <div class="num">2</div>
+              <div>
+                <h3>Jump into voice when you feel like it</h3>
+                <p>Some people talk, some people just hang out. Both are normal here.</p>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="num">3</div>
+              <div>
+                <h3>Use it for what you need</h3>
+                <p>Games, movies, music, or just background company — whatever.</p>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="num">4</div>
+              <div>
+                <h3>Want privacy? Make a private VC</h3>
+                <p>Keep your group conversation private without leaving the server.</p>
+              </div>
             </div>
           </div>
 
           <div class="cta">
-            <a class="btn primary" href={DISCORD_INVITE} target="_blank" rel="noreferrer">
-              Join Discord
-            </a>
-            <a class="btn ghost" href="/rules">Read rules</a>
+            <a class="btn primary" href={DISCORD_INVITE} target="_blank" rel="noreferrer">Join Discord</a>
+            <a class="btn ghost" href="/discord/rules">Discord rules</a>
           </div>
 
           <p class="fine">
-            You can lurk first. No weird onboarding. No pressure.
+            If you want to add more “custom features” here later, this page is set up to scale without becoming a wall of text.
           </p>
         </section>
       </main>
+
+      <footer class="footer">
+        <div class="container foot">
+          <span>© {new Date().getFullYear()} {SITE_NAME}</span>
+          <span class="muted">Discord</span>
+        </div>
+      </footer>
     </div>
 
     <style is:global>
-      html, body {
-        height: 100%;
-      }
+      html, body { height: 100%; }
 
-      body {
-        margin: 0;
-        min-height: 100vh;
+      body{
+        margin:0;
+        min-height:100vh;
         font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         color: rgba(255,255,255,0.92);
 
@@ -97,30 +185,19 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
           radial-gradient(700px 450px at 55% 95%, rgba(255,170,120,0.10), transparent 55%),
           linear-gradient(#070a0f, #070a0f);
 
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
-        background-attachment: fixed;
+        background-repeat:no-repeat;
+        background-size:100% 100%;
+        background-attachment:fixed;
       }
 
-      .page {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
+      a{ color:inherit; text-decoration:none; }
+      .container{ max-width: 1020px; margin: 0 auto; padding: 0 18px; }
 
-      main {
-        flex: 1;
-      }
+      .page{ min-height:100vh; display:flex; flex-direction:column; }
+      main{ flex:1; }
 
-      a { color: inherit; text-decoration: none; }
-
-      .container {
-        max-width: 1020px;
-        margin: 0 auto;
-        padding: 0 18px;
-      }
-
-      .top {
+      /* Top nav */
+      .top{
         position: sticky;
         top: 0;
         z-index: 10;
@@ -129,150 +206,199 @@ const DISCORD_INVITE = "https://discord.gg/9rPcHQZ7SH";
         border-bottom: 1px solid rgba(255,255,255,0.10);
       }
 
-      .nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 18px;
-        gap: 14px;
+      .nav{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:14px 18px;
+        gap:14px;
       }
 
-      .brand {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        white-space: nowrap;
+      .brand{
+        display:flex;
+        gap:10px;
+        align-items:center;
+        font-weight:800;
+        letter-spacing:-0.02em;
+        white-space:nowrap;
       }
 
-      .mark {
-        width: 12px;
-        height: 12px;
-        border-radius: 999px;
-        background: #09ff03;
-        box-shadow:
-          0 0 0 6px rgba(9,255,3,0.12),
-          0 0 28px rgba(9,255,3,0.25);
+      .mark{
+        width:12px;height:12px;border-radius:999px;background:#09ff03;
+        box-shadow: 0 0 0 6px rgba(9,255,3,0.12), 0 0 28px rgba(9,255,3,0.25);
       }
 
-      .links {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-      }
+      .links{ display:flex; gap:14px; align-items:center; }
+      .links a{ color: rgba(255,255,255,0.78); font-size:14px; }
+      .links a:hover{ color: rgba(255,255,255,0.95); }
 
-      .links a {
-        color: rgba(255,255,255,0.78);
-        font-size: 14px;
-      }
-
-      .links a:hover {
-        color: rgba(255,255,255,0.95);
-      }
-
-      .pill {
-        padding: 10px 12px;
-        border-radius: 999px;
+      .pill{
+        padding:10px 12px;border-radius:999px;
         border: 1px solid rgba(9,255,3,0.24);
         background: rgba(9,255,3,0.10);
         color: rgba(255,255,255,0.95);
       }
+      .mobileJoin{ display:none; }
 
-      .mobileJoin {
-        display: none;
-      }
+      /* Hero welcome */
+      .hero{ padding: 34px 0 10px; }
 
-      .card {
-        margin: 28px 0;
+      .welcome{
         border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 22px;
         background: rgba(255,255,255,0.06);
-        border-radius: 18px;
-        padding: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+        box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+        padding: 22px;
       }
 
-      h1 {
-        margin: 0 0 10px;
-        font-size: 34px;
-        letter-spacing: -0.02em;
-      }
+      h1{ margin:0 0 10px; font-size: 40px; letter-spacing: -0.03em; }
+      h2{ margin:0 0 10px; font-size: 22px; letter-spacing: -0.02em; }
+      h3{ margin:0 0 6px; font-size: 16px; }
 
-      h2 {
-        margin: 0 0 6px;
-        font-size: 18px;
-      }
-
-      .lead {
-        color: rgba(255,255,255,0.72);
+      .lead{
+        margin:0;
+        color: rgba(255,255,255,0.74);
         font-size: 17px;
+        line-height: 1.7;
+        max-width: 92ch;
+      }
+
+      .note{
+        margin: 8px 0 0;
+        color: rgba(255,255,255,0.70);
         line-height: 1.6;
-        max-width: 78ch;
+        max-width: 92ch;
       }
 
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 14px;
-      }
-
-      .tile {
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 16px;
-        padding: 16px;
-        background: rgba(255,255,255,0.03);
-      }
-
-      .tile p {
-        margin: 0;
-        color: rgba(255,255,255,0.72);
-        line-height: 1.55;
-      }
-
-      .cta {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 16px;
-      }
-
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 12px 16px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.14);
-        background: rgba(255,255,255,0.04);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.22);
-        transition: transform 0.12s ease, background 0.12s ease;
-      }
-
-      .btn:hover {
-        transform: translateY(-1px);
-        background: rgba(255,255,255,0.07);
-      }
-
-      .btn.primary {
-        border-color: rgba(9,255,3,0.22);
-        background: rgba(9,255,3,0.10);
-      }
-
-      .btn.ghost {
-        background: rgba(255,255,255,0.03);
-      }
-
-      .fine {
-        margin-top: 14px;
+      .fine{
+        margin-top: 12px;
         color: rgba(255,255,255,0.55);
         font-size: 13px;
       }
 
-      @media (max-width: 820px) {
-        .links { display: none; }
-        .mobileJoin { display: inline-flex; }
-        .grid { grid-template-columns: 1fr; }
+      .cta{
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+        margin-top: 14px;
+      }
+
+      .btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding: 12px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.04);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+        transition: transform .14s ease, background .14s ease;
+      }
+      .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.07); }
+      .btn.primary{ border-color: rgba(9,255,3,0.22); background: rgba(9,255,3,0.10); }
+      .btn.ghost{ background: rgba(255,255,255,0.03); }
+
+      /* Cards */
+      .card{
+        margin: 18px 0;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      }
+
+      .grid{
+        display:grid;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .tile{
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 18px;
+        padding: 16px;
+        background: rgba(255,255,255,0.03);
+      }
+
+      .tile p{
+        margin:0;
+        color: rgba(255,255,255,0.72);
+        line-height: 1.6;
+      }
+
+      .pills{
+        display:flex;
+        flex-wrap:wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .pill2{
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.03);
+        color: rgba(255,255,255,0.78);
+        font-size: 13px;
+      }
+
+      .steps{
+        display:grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .step{
+        display:flex;
+        gap: 12px;
+        align-items:flex-start;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 18px;
+        padding: 16px;
+        background: rgba(255,255,255,0.03);
+      }
+
+      .num{
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight: 900;
+        color: rgba(255,255,255,0.92);
+        border: 1px solid rgba(9,255,3,0.20);
+        background: rgba(9,255,3,0.08);
+        box-shadow: 0 0 0 1px rgba(9,255,3,0.06) inset;
+        flex: 0 0 auto;
+      }
+
+      /* Footer */
+      .footer{
+        border-top: 1px solid rgba(255,255,255,0.10);
+        background: rgba(7,10,15,0.35);
+        backdrop-filter: blur(10px);
+      }
+
+      .foot{
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        padding: 16px 18px;
+        flex-wrap:wrap;
+      }
+
+      .muted{ color: rgba(255,255,255,0.55); }
+
+      @media (max-width: 980px){
+        .grid{ grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 820px){
+        .links{ display:none; }
+        .mobileJoin{ display:inline-flex; }
       }
     </style>
   </body>
