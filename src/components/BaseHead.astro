@@ -1,47 +1,191 @@
 ---
-// Import the global.css file here so that it is included on
-// all pages through the use of the <BaseHead /> component.
-import '../styles/global.css';
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
 
-interface Props {
-	title: string;
-	description: string;
-	image?: string;
-}
+type Props = CollectionEntry<"blog">["data"];
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-
-const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage } = Astro.props as Props;
+const SITE_NAME = "The-Circle";
 ---
 
-<!-- Global Metadata -->
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<meta name="generator" content={Astro.generator} />
+<html lang="en">
+  <head>
+    <BaseHead title={`${title} • Blog • ${SITE_NAME}`} description={description} />
+  </head>
 
-<!-- Font preloads -->
-<link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin />
-<link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin />
+  <body>
+    <div class="page">
+      <Header />
 
-<!-- Canonical URL -->
-<link rel="canonical" href={canonicalURL} />
+      <main class="container">
+        {heroImage && (
+          <div class="hero">
+            <img width="1920" height="960" src={heroImage} alt="" loading="eager" />
+          </div>
+        )}
 
-<!-- Primary Meta Tags -->
-<title>{title}</title>
-<meta name="title" content={title} />
-<meta name="description" content={description} />
+        <article class="card">
+          <header class="postHead">
+            <div class="meta">
+              <span class="date"><FormattedDate date={pubDate} /></span>
+              {updatedDate && (
+                <span class="updated">
+                  Last updated on <FormattedDate date={updatedDate} />
+                </span>
+              )}
+            </div>
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content={Astro.url} />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image, Astro.url)} />
+            <h1 class="title">{title}</h1>
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image, Astro.url)} />
+            {description && <p class="lead">{description}</p>}
+
+            <hr class="rule" />
+          </header>
+
+          <div class="prose">
+            <slot />
+          </div>
+        </article>
+      </main>
+
+      <Footer />
+    </div>
+
+    <style>
+      /* Layout spacing */
+      main { padding-top: 18px; padding-bottom: 18px; }
+
+      /* Hero image (optional) */
+      .hero{
+        margin: 18px 0;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.04);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      }
+      .hero img{
+        display:block;
+        width:100%;
+        height:auto;
+      }
+
+      /* Post header */
+      .postHead{ margin-bottom: 14px; }
+      .meta{
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+        margin-bottom: 12px;
+      }
+      .date{
+        font-size:13px;
+        color: rgba(255,255,255,0.55);
+      }
+      .updated{
+        font-size:13px;
+        color: rgba(255,255,255,0.55);
+        font-style: italic;
+      }
+      .title{
+        margin:0;
+        font-size:34px;
+        letter-spacing:-0.02em;
+        line-height:1.15;
+      }
+      .rule{
+        border:none;
+        border-top:1px solid rgba(255,255,255,0.10);
+        margin:16px 0 0;
+      }
+
+      /* Prose styling that matches your dark theme */
+      .prose :global(p){
+        margin: 0 0 16px;
+        line-height: 1.75;
+      }
+      .prose :global(a){
+        text-decoration: underline;
+      }
+      .prose :global(h2){
+        margin: 22px 0 10px;
+        font-size: 22px;
+        letter-spacing: -0.02em;
+      }
+      .prose :global(h3){
+        margin: 18px 0 10px;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+      }
+      .prose :global(ul),
+      .prose :global(ol){
+        margin: 0 0 16px;
+        padding-left: 22px;
+      }
+      .prose :global(li){
+        margin: 6px 0;
+      }
+      .prose :global(blockquote){
+        margin: 16px 0;
+        padding: 10px 14px;
+        border-left: 3px solid rgba(9,255,3,0.35);
+        background: rgba(9,255,3,0.06);
+        border-radius: 14px;
+        color: rgba(255,255,255,0.85);
+      }
+      .prose :global(hr){
+        border:none;
+        border-top:1px solid rgba(255,255,255,0.10);
+        margin:16px 0;
+      }
+      .prose :global(img){
+        max-width: 100%;
+        height: auto;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.12);
+      }
+      .prose :global(code){
+        padding: 2px 6px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.10);
+      }
+      .prose :global(pre){
+        padding: 14px;
+        border-radius: 14px;
+        background: rgba(0,0,0,0.35);
+        border: 1px solid rgba(255,255,255,0.10);
+        overflow: auto;
+      }
+      .prose :global(pre code){
+        all: unset;
+      }
+      .prose :global(table){
+        width:100%;
+        border-collapse: collapse;
+        margin: 14px 0;
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .prose :global(th),
+      .prose :global(td){
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.10);
+        text-align: left;
+      }
+      .prose :global(th){
+        color: rgba(255,255,255,0.75);
+        background: rgba(255,255,255,0.05);
+        font-size: 13px;
+        letter-spacing: .02em;
+      }
+      .prose :global(tr:last-child td){
+        border-bottom: none;
+      }
+    </style>
+  </body>
+</html>
