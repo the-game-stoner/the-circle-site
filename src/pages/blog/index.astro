@@ -14,7 +14,7 @@ const posts = (await getCollection('blog')).sort(
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Blog • {SITE_NAME}</title>
+    <title>Circle Blog • {SITE_NAME}</title>
     <meta name="description" content="Notes, playlists, and moments from around The-Circle." />
     <link rel="icon" href="/favicon.png" />
   </head>
@@ -25,13 +25,13 @@ const posts = (await getCollection('blog')).sort(
 
       <main class="container">
         <section class="card">
-          <h1>Blog</h1>
+          <h1>Circle Blog</h1>
           <p class="lead">Notes, playlists, and moments from around The-Circle.</p>
         </section>
 
         {posts.length === 0 ? (
           <section class="card">
-            <p class="muted">No posts yet.</p>
+            <p class="muted">Nothing here yet — first post coming soon.</p>
           </section>
         ) : (
           posts.map((post) => (
@@ -46,7 +46,11 @@ const posts = (await getCollection('blog')).sort(
 
               <div class="meta">
                 <span class="date">
-                  {post.data.pubDate.toLocaleDateString()}
+                  {post.data.pubDate.toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })}
                 </span>
               </div>
             </section>
@@ -94,10 +98,67 @@ const posts = (await getCollection('blog')).sort(
       .subtle{color:rgba(255,255,255,0.70);margin:10px 0 0}
       .muted{color:rgba(255,255,255,0.55)}
 
-      .post a:hover{ text-decoration: underline; }
+      /* ===== "Pretty" blog list styling ===== */
 
-      .meta{ margin-top:10px; }
-      .date{ font-size:13px; color:rgba(255,255,255,0.55); }
+      .post{
+        position: relative;
+        transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+      }
+
+      .post::before{
+        content:"";
+        position:absolute;
+        left:0;
+        top:18px;
+        bottom:18px;
+        width:3px;
+        border-radius:3px;
+        background: rgba(9,255,3,0.35);
+        opacity:0;
+        transition: opacity 0.12s ease;
+      }
+
+      .post:hover{
+        transform: translateY(-2px);
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(9,255,3,0.25);
+      }
+
+      .post:hover::before{
+        opacity:1;
+      }
+
+      .post h2{
+        margin-bottom: 6px;
+        line-height: 1.25;
+      }
+
+      .post h2 a{
+        display: inline-block;
+      }
+
+      .post h2 a:hover{
+        text-decoration: underline;
+      }
+
+      .post .subtle{
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .meta{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin-top:12px;
+      }
+
+      .date{
+        font-size:12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.45);
+      }
     </style>
   </body>
 </html>
