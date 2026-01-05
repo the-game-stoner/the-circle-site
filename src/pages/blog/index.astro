@@ -4,7 +4,6 @@ import Footer from '../../components/Footer.astro';
 import { getCollection } from 'astro:content';
 
 const SITE_NAME = "The-Circle";
-
 const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
@@ -17,65 +16,88 @@ const posts = (await getCollection('blog')).sort(
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Blog • {SITE_NAME}</title>
     <meta name="description" content="Notes, playlists, and moments from around The-Circle." />
+    <link rel="icon" href="/favicon.png" />
   </head>
 
   <body>
-    <Header />
+    <div class="page">
+      <Header />
 
-    <main class="container">
-      <section class="card">
-        <h1>Blog</h1>
-        <p class="lead">
-          Notes, playlists, and moments from around The-Circle.
-        </p>
-      </section>
-
-      {posts.length === 0 && (
+      <main class="container">
         <section class="card">
-          <p class="muted">No posts yet.</p>
+          <h1>Blog</h1>
+          <p class="lead">Notes, playlists, and moments from around The-Circle.</p>
         </section>
-      )}
 
-      {posts.map((post) => (
-        <section class="card post">
-          <h2>
-            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-          </h2>
+        {posts.length === 0 ? (
+          <section class="card">
+            <p class="muted">No posts yet.</p>
+          </section>
+        ) : (
+          posts.map((post) => (
+            <section class="card post">
+              <h2>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+              </h2>
 
-          {post.data.description && (
-            <p class="subtle">{post.data.description}</p>
-          )}
+              {post.data.description && (
+                <p class="subtle">{post.data.description}</p>
+              )}
 
-          <span class="date">
-            {post.data.pubDate.toLocaleDateString()}
-          </span>
-        </section>
-      ))}
-    </main>
+              <div class="meta">
+                <span class="date">
+                  {post.data.pubDate.toLocaleDateString()}
+                </span>
+              </div>
+            </section>
+          ))
+        )}
+      </main>
 
-    <Footer />
+      <Footer />
+    </div>
 
-    <style>
-      main { padding-top: 18px; }
-
-      .post h2 {
-        margin: 0 0 6px;
-        font-size: 22px;
-        letter-spacing: -0.02em;
+    <style is:global>
+      html, body { height: 100%; }
+      body{
+        margin:0; min-height:100vh;
+        font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+        color:rgba(255,255,255,0.92);
+        background-image:
+          radial-gradient(900px 500px at 15% 10%, rgba(9,255,3,0.14), transparent 60%),
+          radial-gradient(800px 450px at 85% 15%, rgba(120,170,255,0.18), transparent 55%),
+          radial-gradient(700px 450px at 55% 95%, rgba(255,170,120,0.10), transparent 55%),
+          linear-gradient(#070a0f, #070a0f);
+        background-repeat:no-repeat;
+        background-size:100% 100%;
+        background-attachment:fixed;
       }
 
-      .post a {
-        color: rgba(255,255,255,0.95);
+      .page{min-height:100vh;display:flex;flex-direction:column}
+      main{flex:1}
+      a{color:inherit;text-decoration:none}
+      .container{max-width:1020px;margin:0 auto;padding:0 18px}
+
+      .card{
+        margin:18px 0;
+        border:1px solid rgba(255,255,255,0.12);
+        background:rgba(255,255,255,0.06);
+        border-radius:18px;
+        padding:20px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.45)
       }
 
-      .post a:hover {
-        text-decoration: underline;
-      }
+      h1{margin:0;font-size:34px;letter-spacing:-0.02em}
+      h2{margin:0;font-size:22px;letter-spacing:-0.02em}
 
-      .date {
-        font-size: 13px;
-        color: rgba(255,255,255,0.55);
-      }
+      .lead{color:rgba(255,255,255,0.72);font-size:17px;line-height:1.6;max-width:86ch;margin:10px 0 0}
+      .subtle{color:rgba(255,255,255,0.70);margin:10px 0 0}
+      .muted{color:rgba(255,255,255,0.55)}
+
+      .post a:hover{ text-decoration: underline; }
+
+      .meta{ margin-top:10px; }
+      .date{ font-size:13px; color:rgba(255,255,255,0.55); }
     </style>
   </body>
 </html>
