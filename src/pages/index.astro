@@ -20,17 +20,14 @@ const SITE_NAME = "The-Circle";
       <header class="top">
         <div class="container nav">
           <a class="brand" href="/">
-            <img
-              src="/favicon.png"
-              alt=""
-              class="logo"
-            />
+            <img src="/favicon.png" alt="" class="logo" />
             <span class="name">{SITE_NAME}</span>
           </a>
 
           <nav class="links">
             <a href="/discord">Discord</a>
             <a href="/league">League</a>
+            <a href="/music">Music</a>
             <a href="/about">About</a>
             <a href="/blog">Blog</a>
           </nav>
@@ -92,14 +89,18 @@ const SITE_NAME = "The-Circle";
               </div>
             </article>
 
+            {/* Replaced "Coming Soon" with Music */}
             <article class="tile">
               <div class="tileTop">
-                <h3>Coming Soon</h3>
-                <span class="chip soft">WIP</span>
+                <h3>The-Circle Music</h3>
+                <span class="chip">New</span>
               </div>
               <p>
-                More projects are in the works. Check back later.
+                Original music by TGS — country, rap, and rock/metal. A clean library where people can listen right on the site.
               </p>
+              <div class="tileCta">
+                <a class="btn primary" href="/music">Learn More</a>
+              </div>
             </article>
           </div>
         </section>
