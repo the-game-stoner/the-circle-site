@@ -34,36 +34,6 @@ const SITE_NAME = "The-Circle";
       </header>
 
       <main class="container">
-        {/* Intro video (top + centered) */}
-        <section class="leagueIntro" aria-label="League intro video">
-          <div class="leagueFrame">
-            <video
-              class="leagueVideo"
-              autoplay
-              muted
-              playsinline
-              preload="metadata"
-              poster="/images/league-intro-poster.jpg"
-            >
-              <source src="/videos/LeagueIntro.mp4" type="video/mp4" />
-            </video>
-
-            <div class="leagueOverlay" aria-hidden="true"></div>
-
-            <div class="leagueMeta">
-              <span class="pill">The-Circle League</span>
-              <span class="pill soft">Fantasy Football</span>
-            </div>
-
-            <button class="replayBtn" type="button" aria-label="Replay intro video">
-              Replay
-            </button>
-          </div>
-
-          <p class="leagueNote">
-          </p>
-        </section>
-
         <section class="hero">
           <div class="heroCard">
             <div class="heroTop">
@@ -78,6 +48,45 @@ const SITE_NAME = "The-Circle";
               Same idea, different stakes.
             </p>
           </div>
+        </section>
+
+        {/* Intro video (under hero box) */}
+        <section class="leagueIntro" aria-label="League intro video">
+          <div class="leagueFrame">
+            <video
+              class="leagueVideo"
+              autoplay
+              muted
+              playsinline
+              preload="metadata"
+            >
+              <source src="/videos/LeagueIntro.mp4" type="video/mp4" />
+            </video>
+
+            <div class="leagueOverlay" aria-hidden="true"></div>
+
+            <div class="leagueMeta" aria-hidden="true">
+              <span class="pill">The-Circle League</span>
+              <span class="pill soft">Fantasy Football</span>
+            </div>
+
+            {/* Controls (auto-hide like a real player) */}
+            <div class="leagueControls" aria-label="Video controls">
+              <button class="ctlBtn playPauseBtn" type="button" aria-label="Pause video">
+                Pause
+              </button>
+              <button class="ctlBtn muteBtn" type="button" aria-label="Unmute video">
+                Unmute
+              </button>
+              <button class="ctlBtn replayBtn" type="button" aria-label="Replay intro video">
+                Replay
+              </button>
+            </div>
+          </div>
+
+          <p class="leagueNote">
+            Tip: it starts muted so it can autoplay on all browsers.
+          </p>
         </section>
 
         <section class="card">
@@ -135,15 +144,14 @@ const SITE_NAME = "The-Circle";
     </div>
 
     <script>
-      // Polished behavior:
-      // - Plays once (no loop). Shows "Replay" after it ends.
-      // - Pauses when scrolled out of view.
-      // - Respects reduced motion + data saver (won't autoplay then).
       (() => {
         const frame = document.querySelector(".leagueFrame");
         const video = document.querySelector(".leagueVideo");
         const replay = document.querySelector(".replayBtn");
-        if (!video || !replay || !frame) return;
+        const playPause = document.querySelector(".playPauseBtn");
+        const muteBtn = document.querySelector(".muteBtn");
+
+        if (!video || !replay || !frame || !playPause || !muteBtn) return;
 
         const prefersReducedMotion =
           window.matchMedia &&
@@ -157,39 +165,76 @@ const SITE_NAME = "The-Circle";
         const showReplay = () => frame.classList.add("ended");
         const hideReplay = () => frame.classList.remove("ended");
 
+        const syncPlayPauseLabel = () => {
+          const paused = video.paused;
+          playPause.textContent = paused ? "Play" : "Pause";
+          playPause.setAttribute("aria-label", paused ? "Play video" : "Pause video");
+        };
+
+        const syncMuteLabel = () => {
+          const muted = video.muted;
+          muteBtn.textContent = muted ? "Unmute" : "Mute";
+          muteBtn.setAttribute("aria-label", muted ? "Unmute video" : "Mute video");
+        };
+
         // If we shouldn't autoplay, start paused and show replay button.
         if (!canAutoplay) {
           video.removeAttribute("autoplay");
           showReplay();
         }
 
-        // Autoplay attempt (muted + playsinline). Some browsers still may block.
         const tryPlay = async () => {
           if (!canAutoplay) return;
           try {
             await video.play();
           } catch (e) {
-            // If blocked, show replay so user can start it.
+            // autoplay blocked → show replay so user can start it
             showReplay();
+          } finally {
+            syncPlayPauseLabel();
           }
         };
 
-        // Replay button
+        // Play/Pause
+        playPause.addEventListener("click", async () => {
+          hideReplay();
+          if (video.paused) {
+            try {
+              await video.play();
+            } catch (e) {
+              showReplay();
+            }
+          } else {
+            video.pause();
+          }
+          syncPlayPauseLabel();
+        });
+
+        // Mute/Unmute
+        muteBtn.addEventListener("click", () => {
+          video.muted = !video.muted;
+          syncMuteLabel();
+        });
+
+        // Replay
         replay.addEventListener("click", async () => {
           hideReplay();
           video.currentTime = 0;
-          video.muted = true;
           try {
             await video.play();
           } catch (e) {
             showReplay();
           }
+          syncPlayPauseLabel();
         });
 
-        // When the video ends, show replay button
-        video.addEventListener("ended", showReplay);
+        // When video ends, show replay button
+        video.addEventListener("ended", () => {
+          showReplay();
+          syncPlayPauseLabel();
+        });
 
-        // Pause when off-screen; resume if back in view (only if canAutoplay and not ended)
+        // Pause when off-screen; resume when back in view (if allowed + not ended)
         const io = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {
@@ -200,11 +245,23 @@ const SITE_NAME = "The-Circle";
                   tryPlay();
                 }
               }
+              syncPlayPauseLabel();
             }
           },
           { threshold: 0.25 }
         );
         io.observe(frame);
+
+        // If user taps/clicks the video itself, toggle play/pause (nice UX)
+        frame.addEventListener("click", (e) => {
+          const target = e.target;
+          if (target && target.closest && target.closest(".leagueControls")) return;
+          playPause.click();
+        });
+
+        // Initial labels
+        syncPlayPauseLabel();
+        syncMuteLabel();
 
         // Kick off
         tryPlay();
@@ -307,117 +364,9 @@ const SITE_NAME = "The-Circle";
         color: rgba(255, 255, 255, 0.95);
       }
 
-      /* Intro video */
-      .leagueIntro {
-        padding: 18px 0 4px;
-      }
-
-      .leagueFrame {
-        position: relative;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        background: rgba(255, 255, 255, 0.04);
-        border-radius: 22px;
-        overflow: hidden;
-        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
-      }
-
-      .leagueVideo {
-        width: 100%;
-        height: auto;
-        display: block;
-        aspect-ratio: 16 / 9;
-        object-fit: cover;
-        background: #000;
-        transform: scale(1.01); /* tiny scale to avoid edge slivers */
-      }
-
-      /* Cinematic overlay */
-      .leagueOverlay {
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-            900px 420px at 20% 20%,
-            rgba(9, 255, 3, 0.10),
-            transparent 60%
-          ),
-          linear-gradient(
-            180deg,
-            rgba(0, 0, 0, 0.25) 0%,
-            rgba(0, 0, 0, 0.08) 35%,
-            rgba(0, 0, 0, 0.42) 100%
-          );
-        pointer-events: none;
-      }
-
-      /* Pills on top of video */
-      .leagueMeta {
-        position: absolute;
-        left: 14px;
-        top: 14px;
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        pointer-events: none;
-      }
-
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 7px 11px;
-        border-radius: 999px;
-        border: 1px solid rgba(9, 255, 3, 0.22);
-        background: rgba(9, 255, 3, 0.10);
-        color: rgba(255, 255, 255, 0.86);
-        font-size: 12px;
-        backdrop-filter: blur(8px);
-      }
-
-      .pill.soft {
-        border-color: rgba(255, 255, 255, 0.16);
-        background: rgba(255, 255, 255, 0.06);
-        color: rgba(255, 255, 255, 0.78);
-      }
-
-      /* Replay button */
-      .replayBtn {
-        position: absolute;
-        right: 14px;
-        bottom: 14px;
-        padding: 10px 14px;
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        background: rgba(7, 10, 15, 0.45);
-        color: rgba(255, 255, 255, 0.92);
-        font-weight: 650;
-        cursor: pointer;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(10px);
-        opacity: 0;
-        transform: translateY(6px);
-        pointer-events: none;
-        transition: opacity 0.16s ease, transform 0.16s ease, background 0.16s ease;
-      }
-
-      .replayBtn:hover {
-        background: rgba(7, 10, 15, 0.60);
-      }
-
-      /* Show replay when ended or when autoplay is blocked */
-      .leagueFrame.ended .replayBtn {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
-      }
-
-      .leagueNote {
-        margin: 10px 2px 0;
-        color: rgba(255, 255, 255, 0.55);
-        font-size: 13px;
-      }
-
       /* Hero */
       .hero {
-        padding: 18px 0 12px;
+        padding: 34px 0 12px;
       }
 
       .heroCard {
@@ -472,15 +421,143 @@ const SITE_NAME = "The-Circle";
         max-width: 92ch;
       }
 
-      .cta {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 16px;
+      /* Intro video (under hero) */
+      .leagueIntro {
+        padding: 6px 0 10px;
       }
 
-      .fine {
-        margin-top: 10px;
+      .leagueFrame {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+      }
+
+      .leagueVideo {
+        width: 100%;
+        height: auto;
+        display: block;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        background: #000;
+        transform: scale(1.01); /* avoid tiny edge slivers */
+      }
+
+      .leagueOverlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            900px 420px at 20% 20%,
+            rgba(9, 255, 3, 0.1),
+            transparent 60%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.25) 0%,
+            rgba(0, 0, 0, 0.08) 35%,
+            rgba(0, 0, 0, 0.42) 100%
+          );
+        pointer-events: none;
+      }
+
+      .leagueMeta {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        pointer-events: none;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border-radius: 999px;
+        border: 1px solid rgba(9, 255, 3, 0.22);
+        background: rgba(9, 255, 3, 0.1);
+        color: rgba(255, 255, 255, 0.86);
+        font-size: 12px;
+        backdrop-filter: blur(8px);
+      }
+
+      .pill.soft {
+        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      /* Controls that auto-hide until hover/focus (like a real player) */
+      .leagueControls {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        pointer-events: auto;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.16s ease, transform 0.16s ease;
+      }
+
+      /* Show controls on hover (desktop) */
+      .leagueFrame:hover .leagueControls {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Show controls when user focuses inside (keyboard accessibility) */
+      .leagueFrame:focus-within .leagueControls {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Always show controls on touch devices */
+      @media (hover: none) {
+        .leagueControls {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .ctlBtn {
+        padding: 10px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(7, 10, 15, 0.45);
+        color: rgba(255, 255, 255, 0.92);
+        font-weight: 650;
+        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(10px);
+        transition: transform 0.12s ease, background 0.16s ease;
+      }
+
+      .ctlBtn:hover {
+        transform: translateY(-1px);
+        background: rgba(7, 10, 15, 0.6);
+      }
+
+      /* Replay only appears when ended/autoplay blocked */
+      .replayBtn {
+        opacity: 0;
+        transform: translateY(6px);
+        pointer-events: none;
+        transition: opacity 0.16s ease, transform 0.16s ease;
+      }
+
+      .leagueFrame.ended .replayBtn {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .leagueNote {
+        margin: 10px 2px 0;
         color: rgba(255, 255, 255, 0.55);
         font-size: 13px;
       }
@@ -560,7 +637,7 @@ const SITE_NAME = "The-Circle";
         color: rgba(255, 255, 255, 0.7);
       }
 
-      /* Buttons (prettier primary) */
+      /* Buttons */
       .btn {
         display: inline-flex;
         align-items: center;
@@ -648,9 +725,6 @@ const SITE_NAME = "The-Circle";
         }
         h1 {
           font-size: 34px;
-        }
-        .leagueIntro {
-          padding-top: 14px;
         }
       }
     </style>
