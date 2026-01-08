@@ -8,8 +8,11 @@ const SITE_NAME = "The-Circle";
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>League • {SITE_NAME}</title>
-    <link rel="icon" href="/favicon.png" type="image/svg+xml">
-    <meta name="description" content="Choose between The-Circle Private League and Public League." />
+    <link rel="icon" href="/favicon.png" type="image/svg+xml" />
+    <meta
+      name="description"
+      content="Choose between The-Circle Private League and Public League."
+    />
   </head>
 
   <body>
@@ -17,7 +20,7 @@ const SITE_NAME = "The-Circle";
       <header class="top">
         <div class="container nav">
           <a class="brand" href="/">
-            <img src="/favicon.png" alt="" class="logo"/>
+            <img src="/favicon.png" alt="" class="logo" />
             <span>{SITE_NAME}</span>
           </a>
 
@@ -31,6 +34,37 @@ const SITE_NAME = "The-Circle";
       </header>
 
       <main class="container">
+        {/* Intro video (top + centered) */}
+        <section class="leagueIntro" aria-label="League intro video">
+          <div class="leagueFrame">
+            <video
+              class="leagueVideo"
+              autoplay
+              muted
+              playsinline
+              preload="metadata"
+              poster="/images/league-intro-poster.jpg"
+            >
+              <source src="/videos/LeagueIntro.mp4" type="video/mp4" />
+            </video>
+
+            <div class="leagueOverlay" aria-hidden="true"></div>
+
+            <div class="leagueMeta">
+              <span class="pill">The-Circle League</span>
+              <span class="pill soft">Fantasy Football</span>
+            </div>
+
+            <button class="replayBtn" type="button" aria-label="Replay intro video">
+              Replay
+            </button>
+          </div>
+
+          <p class="leagueNote">
+            Tip: video is muted by design so it can autoplay on all browsers.
+          </p>
+        </section>
+
         <section class="hero">
           <div class="heroCard">
             <div class="heroTop">
@@ -44,7 +78,6 @@ const SITE_NAME = "The-Circle";
               The-Circle.xyz runs two leagues: a Private league and a Public free league.
               Same idea, different stakes.
             </p>
-
           </div>
         </section>
 
@@ -102,256 +135,524 @@ const SITE_NAME = "The-Circle";
       </footer>
     </div>
 
-    <style is:global>
-      html, body { height: 100%; }
+    <script>
+      // Polished behavior:
+      // - Plays once (no loop). Shows "Replay" after it ends.
+      // - Pauses when scrolled out of view.
+      // - Respects reduced motion + data saver (won't autoplay then).
+      (() => {
+        const frame = document.querySelector(".leagueFrame");
+        const video = document.querySelector(".leagueVideo");
+        const replay = document.querySelector(".replayBtn");
+        if (!video || !replay || !frame) return;
 
-      body{
-        margin:0;
-        min-height:100vh;
-        font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-        color:rgba(255,255,255,0.92);
-        background-image:
-          radial-gradient(900px 500px at 15% 10%, rgba(9,255,3,0.14), transparent 60%),
-          radial-gradient(800px 450px at 85% 15%, rgba(120,170,255,0.18), transparent 55%),
-          radial-gradient(700px 450px at 55% 95%, rgba(255,170,120,0.10), transparent 55%),
-          linear-gradient(#070a0f, #070a0f);
-        background-repeat:no-repeat;
-        background-size:100% 100%;
-        background-attachment:fixed;
+        const prefersReducedMotion =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const saveData =
+          navigator.connection && navigator.connection.saveData === true;
+
+        const canAutoplay = !prefersReducedMotion && !saveData;
+
+        const showReplay = () => frame.classList.add("ended");
+        const hideReplay = () => frame.classList.remove("ended");
+
+        // If we shouldn't autoplay, start paused and show replay button.
+        if (!canAutoplay) {
+          video.removeAttribute("autoplay");
+          showReplay();
+        }
+
+        // Autoplay attempt (muted + playsinline). Some browsers still may block.
+        const tryPlay = async () => {
+          if (!canAutoplay) return;
+          try {
+            await video.play();
+          } catch (e) {
+            // If blocked, show replay so user can start it.
+            showReplay();
+          }
+        };
+
+        // Replay button
+        replay.addEventListener("click", async () => {
+          hideReplay();
+          video.currentTime = 0;
+          video.muted = true;
+          try {
+            await video.play();
+          } catch (e) {
+            showReplay();
+          }
+        });
+
+        // When the video ends, show replay button
+        video.addEventListener("ended", showReplay);
+
+        // Pause when off-screen; resume if back in view (only if canAutoplay and not ended)
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) {
+                if (!video.paused) video.pause();
+              } else {
+                if (canAutoplay && !frame.classList.contains("ended")) {
+                  tryPlay();
+                }
+              }
+            }
+          },
+          { threshold: 0.25 }
+        );
+        io.observe(frame);
+
+        // Kick off
+        tryPlay();
+      })();
+    </script>
+
+    <style is:global>
+      html,
+      body {
+        height: 100%;
       }
 
-      a{color:inherit;text-decoration:none}
-      .container{max-width:1020px;margin:0 auto;padding:0 18px}
-      .page{min-height:100vh;display:flex;flex-direction:column}
-      main{flex:1}
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: rgba(255, 255, 255, 0.92);
+        background-image: radial-gradient(
+            900px 500px at 15% 10%,
+            rgba(9, 255, 3, 0.14),
+            transparent 60%
+          ),
+          radial-gradient(
+            800px 450px at 85% 15%,
+            rgba(120, 170, 255, 0.18),
+            transparent 55%
+          ),
+          radial-gradient(
+            700px 450px at 55% 95%,
+            rgba(255, 170, 120, 0.1),
+            transparent 55%
+          ),
+          linear-gradient(#070a0f, #070a0f);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-attachment: fixed;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .container {
+        max-width: 1020px;
+        margin: 0 auto;
+        padding: 0 18px;
+      }
+      .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      main {
+        flex: 1;
+      }
 
       /* Top nav */
-      .top{
-        position:sticky;
-        top:0;
-        z-index:10;
-        backdrop-filter:blur(10px);
-        background:rgba(7,10,15,0.55);
-        border-bottom:1px solid rgba(255,255,255,0.10);
+      .top {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        background: rgba(7, 10, 15, 0.55);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      .nav{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:14px 18px;
-        gap:14px;
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        gap: 14px;
       }
 
-      .brand{
-        display:flex;
-        gap:10px;
-        align-items:center;
-        font-weight:900;
-        letter-spacing:-0.02em;
-        white-space:nowrap;
+      .brand {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
       }
 
-      .logo{
-        width:30px;
-        height:30px;
-        display:block;
+      .logo {
+        width: 30px;
+        height: 30px;
+        display: block;
       }
 
-      .links{display:flex;gap:14px;align-items:center}
-      .links a{color:rgba(255,255,255,0.78);font-size:14px}
-      .links a:hover{color:rgba(255,255,255,0.95)}
+      .links {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+      }
+      .links a {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 14px;
+      }
+      .links a:hover {
+        color: rgba(255, 255, 255, 0.95);
+      }
+
+      /* Intro video */
+      .leagueIntro {
+        padding: 18px 0 4px;
+      }
+
+      .leagueFrame {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+      }
+
+      .leagueVideo {
+        width: 100%;
+        height: auto;
+        display: block;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        background: #000;
+        transform: scale(1.01); /* tiny scale to avoid edge slivers */
+      }
+
+      /* Cinematic overlay */
+      .leagueOverlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            900px 420px at 20% 20%,
+            rgba(9, 255, 3, 0.10),
+            transparent 60%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.25) 0%,
+            rgba(0, 0, 0, 0.08) 35%,
+            rgba(0, 0, 0, 0.42) 100%
+          );
+        pointer-events: none;
+      }
+
+      /* Pills on top of video */
+      .leagueMeta {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        pointer-events: none;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border-radius: 999px;
+        border: 1px solid rgba(9, 255, 3, 0.22);
+        background: rgba(9, 255, 3, 0.10);
+        color: rgba(255, 255, 255, 0.86);
+        font-size: 12px;
+        backdrop-filter: blur(8px);
+      }
+
+      .pill.soft {
+        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      /* Replay button */
+      .replayBtn {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        padding: 10px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(7, 10, 15, 0.45);
+        color: rgba(255, 255, 255, 0.92);
+        font-weight: 650;
+        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        transform: translateY(6px);
+        pointer-events: none;
+        transition: opacity 0.16s ease, transform 0.16s ease, background 0.16s ease;
+      }
+
+      .replayBtn:hover {
+        background: rgba(7, 10, 15, 0.60);
+      }
+
+      /* Show replay when ended or when autoplay is blocked */
+      .leagueFrame.ended .replayBtn {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .leagueNote {
+        margin: 10px 2px 0;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 13px;
+      }
 
       /* Hero */
-      .hero{padding:34px 0 12px}
-
-      .heroCard{
-        border:1px solid rgba(255,255,255,0.12);
-        background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
-        border-radius:22px;
-        padding:22px;
-        box-shadow:0 24px 70px rgba(0,0,0,0.45);
+      .hero {
+        padding: 18px 0 12px;
       }
 
-      .heroTop{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:12px;
-        flex-wrap:wrap;
-        margin-bottom:10px;
+      .heroCard {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.08),
+          rgba(255, 255, 255, 0.04)
+        );
+        border-radius: 22px;
+        padding: 22px;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
       }
 
-      .kicker{
-        display:inline-flex;
-        align-items:center;
-        padding:6px 10px;
-        border-radius:999px;
-        border:1px solid rgba(9,255,3,0.18);
-        background:rgba(9,255,3,0.08);
-        color:rgba(255,255,255,0.82);
-        font-size:12px;
+      .heroTop {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
       }
 
-      .mini{color:rgba(255,255,255,0.70);font-size:14px}
-
-      h1{
-        margin:0 0 10px;
-        font-size:42px;
-        letter-spacing:-0.03em;
-        line-height:1.08;
+      .kicker {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(9, 255, 3, 0.18);
+        background: rgba(9, 255, 3, 0.08);
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 12px;
       }
 
-      .lead{
-        margin:0;
-        color:rgba(255,255,255,0.74);
-        font-size:17px;
-        line-height:1.7;
-        max-width:92ch;
+      .mini {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
       }
 
-      .cta{
-        display:flex;
-        gap:12px;
-        flex-wrap:wrap;
-        margin-top:16px;
+      h1 {
+        margin: 0 0 10px;
+        font-size: 42px;
+        letter-spacing: -0.03em;
+        line-height: 1.08;
       }
 
-      .fine{
-        margin-top:10px;
-        color:rgba(255,255,255,0.55);
-        font-size:13px;
+      .lead {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 17px;
+        line-height: 1.7;
+        max-width: 92ch;
+      }
+
+      .cta {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+
+      .fine {
+        margin-top: 10px;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 13px;
       }
 
       /* Main card */
-      .card{
-        margin:18px 0 28px;
-        border:1px solid rgba(255,255,255,0.12);
-        background:rgba(255,255,255,0.06);
-        border-radius:20px;
-        padding:20px;
-        box-shadow:0 20px 60px rgba(0,0,0,0.45);
+      .card {
+        margin: 18px 0 28px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
       }
 
-      .grid{
-        display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:12px;
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
       }
 
-      .tile{
-        border:1px solid rgba(255,255,255,0.12);
-        border-radius:18px;
-        padding:16px;
-        background:rgba(255,255,255,0.03);
-        transition:transform .12s ease, box-shadow .12s ease;
+      .tile {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.03);
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
       }
 
-      .tile:hover{
-        transform:translateY(-2px);
-        box-shadow:0 18px 40px rgba(0,0,0,0.35);
+      .tile:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
       }
 
-      .tileTop{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:10px;
-        flex-wrap:wrap;
+      .tileTop {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
       }
 
-      h2{margin:0;font-size:18px}
-
-      p{margin:10px 0 0;color:rgba(255,255,255,0.72);line-height:1.65}
-      .micro{margin-top:10px;color:rgba(255,255,255,0.55);font-size:13px}
-
-      .tileCta{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-
-      .tag{
-        padding:6px 10px;
-        border-radius:999px;
-        border:1px solid rgba(9,255,3,0.20);
-        background:rgba(9,255,3,0.08);
-        color:rgba(255,255,255,0.82);
-        font-size:12px;
+      h2 {
+        margin: 0;
+        font-size: 18px;
       }
 
-      .tag.soft{
-        border-color:rgba(255,255,255,0.16);
-        background:rgba(255,255,255,0.04);
-        color:rgba(255,255,255,0.70);
+      p {
+        margin: 10px 0 0;
+        color: rgba(255, 255, 255, 0.72);
+        line-height: 1.65;
+      }
+      .micro {
+        margin-top: 10px;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 13px;
+      }
+
+      .tileCta {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      .tag {
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(9, 255, 3, 0.2);
+        background: rgba(9, 255, 3, 0.08);
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 12px;
+      }
+
+      .tag.soft {
+        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.7);
       }
 
       /* Buttons (prettier primary) */
-      .btn{
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        padding:12px 18px;
-        border-radius:14px;
-        border:1px solid rgba(255,255,255,0.14);
-        background:rgba(255,255,255,0.04);
-        box-shadow:0 8px 25px rgba(0,0,0,0.22);
-        font-weight:600;
-        transition:transform .12s ease, background .12s ease, box-shadow .12s ease;
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 18px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.22);
+        font-weight: 600;
+        transition: transform 0.12s ease, background 0.12s ease,
+          box-shadow 0.12s ease;
       }
 
-      .btn:hover{
-        transform:translateY(-1px);
-        background:rgba(255,255,255,0.07);
+      .btn:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.07);
       }
 
-      .btn.primary{
-        border-color:rgba(9,255,3,0.45);
-        background:linear-gradient(180deg, rgba(9,255,3,0.22), rgba(9,255,3,0.12));
-        box-shadow:
-          0 0 0 1px rgba(9,255,3,0.25) inset,
-          0 12px 30px rgba(9,255,3,0.18);
+      .btn.primary {
+        border-color: rgba(9, 255, 3, 0.45);
+        background: linear-gradient(
+          180deg,
+          rgba(9, 255, 3, 0.22),
+          rgba(9, 255, 3, 0.12)
+        );
+        box-shadow: 0 0 0 1px rgba(9, 255, 3, 0.25) inset,
+          0 12px 30px rgba(9, 255, 3, 0.18);
       }
 
-      .btn.primary:hover{
-        background:linear-gradient(180deg, rgba(9,255,3,0.32), rgba(9,255,3,0.18));
-        box-shadow:
-          0 0 0 1px rgba(9,255,3,0.45) inset,
-          0 18px 40px rgba(9,255,3,0.28);
+      .btn.primary:hover {
+        background: linear-gradient(
+          180deg,
+          rgba(9, 255, 3, 0.32),
+          rgba(9, 255, 3, 0.18)
+        );
+        box-shadow: 0 0 0 1px rgba(9, 255, 3, 0.45) inset,
+          0 18px 40px rgba(9, 255, 3, 0.28);
       }
 
-      .btn.ghost{
-        background:rgba(255,255,255,0.03);
+      .btn.ghost {
+        background: rgba(255, 255, 255, 0.03);
       }
 
       /* Callout */
-      .callout{
-        margin-top:14px;
-        border:1px solid rgba(255,255,255,0.12);
-        border-radius:18px;
-        padding:16px;
-        background:rgba(255,255,255,0.03);
+      .callout {
+        margin-top: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.03);
       }
 
-      .text{margin:0;color:rgba(255,255,255,0.72);line-height:1.7}
+      .text {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.72);
+        line-height: 1.7;
+      }
 
       /* Footer */
-      .footer{
-        border-top:1px solid rgba(255,255,255,0.10);
-        background:rgba(7,10,15,0.35);
-        backdrop-filter:blur(10px);
+      .footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(7, 10, 15, 0.35);
+        backdrop-filter: blur(10px);
       }
 
-      .foot{
-        display:flex;
-        justify-content:space-between;
-        gap:12px;
-        padding:16px 18px;
-        flex-wrap:wrap;
+      .foot {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px;
+        flex-wrap: wrap;
       }
 
-      .muted{color:rgba(255,255,255,0.55)}
+      .muted {
+        color: rgba(255, 255, 255, 0.55);
+      }
 
-      @media (max-width: 820px){
-        .links{display:none}
-        .grid{grid-template-columns:1fr}
-        h1{font-size:34px}
+      @media (max-width: 820px) {
+        .links {
+          display: none;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        h1 {
+          font-size: 34px;
+        }
+        .leagueIntro {
+          padding-top: 14px;
+        }
       }
     </style>
   </body>
