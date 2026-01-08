@@ -1,1 +1,330 @@
-fill here
+---
+const SITE_NAME = "The-Circle";
+
+/**
+ * Add tracks here:
+ * - For MP3s hosted on your site: audioSrc: "/audio/FileName.mp3"
+ * - For YouTube uploads: youtubeId: "VIDEO_ID"
+ * Only players for now (no downloads).
+ */
+const tracks = [
+  // Example audio-only tracks
+  { title: "Backroad Something", genre: "Country", audioSrc: "/audio/BackroadSomething.mp3" },
+  { title: "Bar Jam", genre: "Country", audioSrc: "/audio/BarJam.mp3" },
+
+  { title: "Midnight Talk", genre: "Rap", audioSrc: "/audio/MidnightTalk.mp3" },
+
+  { title: "Pieces", genre: "Rock/Metal", audioSrc: "/audio/Pieces.mp3" },
+
+  // Example YouTube tracks (replace IDs)
+  { title: "League Theme (Video)", genre: "Featured", youtubeId: "dQw4w9WgXcQ" },
+];
+
+const genres = ["Featured", "Country", "Rap", "Rock/Metal", "Other"];
+
+const normalizeGenre = (g) => (genres.includes(g) ? g : "Other");
+const grouped = genres.map((g) => ({
+  genre: g,
+  items: tracks.filter((t) => normalizeGenre(t.genre) === g),
+})).filter(g => g.items.length > 0);
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Music • {SITE_NAME}</title>
+    <link rel="icon" href="/favicon.png" type="image/svg+xml" />
+    <meta name="description" content="Music by The-Circle — listen to tracks and watch videos." />
+  </head>
+
+  <body>
+    <div class="page">
+      <header class="top">
+        <div class="container nav">
+          <a class="brand" href="/">
+            <img src="/favicon.png" alt="" class="logo"/>
+            <span>{SITE_NAME}</span>
+          </a>
+
+          <nav class="links">
+            <a href="/">Home</a>
+            <a href="/league">League</a>
+            <a href="/music">Music</a>
+            <a href="/about">About</a>
+            <a href="/blog">Blog</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="hero">
+          <div class="heroCard">
+            <div class="heroTop">
+              <span class="kicker">Music</span>
+              <span class="mini">Audio players • No downloads (yet)</span>
+            </div>
+
+            <h1>Music I’ve Made</h1>
+
+            <p class="lead">
+              Play tracks right on the site. Videos are embedded when available.
+            </p>
+          </div>
+        </section>
+
+        {grouped.map(({ genre, items }) => (
+          <section class="card" aria-label={`${genre} tracks`}>
+            <div class="cardTop">
+              <h2>{genre}</h2>
+              <span class="tag soft">{items.length} track(s)</span>
+            </div>
+
+            <div class="grid">
+              {items.map((t) => (
+                <article class="tile">
+                  <div class="tileTopRow">
+                    <h3>{t.title}</h3>
+                    <span class="chip">{t.youtubeId ? "Video" : "Audio"}</span>
+                  </div>
+
+                  {t.youtubeId ? (
+                    <div class="player">
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${t.youtubeId}`}
+                        title={t.title}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                      />
+                    </div>
+                  ) : (
+                    <div class="audioWrap">
+                      <audio class="audio" controls preload="metadata">
+                        <source src={t.audioSrc} type="audio/mpeg" />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </main>
+
+      <footer class="footer">
+        <div class="container foot">
+          <span>© {new Date().getFullYear()} {SITE_NAME}</span>
+          <span class="muted">The-Circle Music</span>
+        </div>
+      </footer>
+    </div>
+
+    <style is:global>
+      html, body { height: 100%; }
+
+      body{
+        margin:0;
+        min-height:100vh;
+        font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+        color:rgba(255,255,255,0.92);
+        background-image:
+          radial-gradient(900px 500px at 15% 10%, rgba(9,255,3,0.14), transparent 60%),
+          radial-gradient(800px 450px at 85% 15%, rgba(120,170,255,0.18), transparent 55%),
+          radial-gradient(700px 450px at 55% 95%, rgba(255,170,120,0.10), transparent 55%),
+          linear-gradient(#070a0f, #070a0f);
+        background-repeat:no-repeat;
+        background-size:100% 100%;
+        background-attachment:fixed;
+      }
+
+      a{color:inherit;text-decoration:none}
+      .container{max-width:1020px;margin:0 auto;padding:0 18px}
+      .page{min-height:100vh;display:flex;flex-direction:column}
+      main{flex:1}
+
+      /* Top nav */
+      .top{
+        position:sticky;
+        top:0;
+        z-index:10;
+        backdrop-filter:blur(10px);
+        background:rgba(7,10,15,0.55);
+        border-bottom:1px solid rgba(255,255,255,0.10);
+      }
+      .nav{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:14px 18px;
+        gap:14px;
+      }
+      .brand{
+        display:flex;
+        gap:10px;
+        align-items:center;
+        font-weight:900;
+        letter-spacing:-0.02em;
+        white-space:nowrap;
+      }
+      .logo{width:30px;height:30px;display:block}
+      .links{display:flex;gap:14px;align-items:center}
+      .links a{color:rgba(255,255,255,0.78);font-size:14px}
+      .links a:hover{color:rgba(255,255,255,0.95)}
+
+      /* Hero */
+      .hero{padding:34px 0 12px}
+      .heroCard{
+        border:1px solid rgba(255,255,255,0.12);
+        background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+        border-radius:22px;
+        padding:22px;
+        box-shadow:0 24px 70px rgba(0,0,0,0.45);
+      }
+      .heroTop{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        flex-wrap:wrap;
+        margin-bottom:10px;
+      }
+      .kicker{
+        display:inline-flex;
+        align-items:center;
+        padding:6px 10px;
+        border-radius:999px;
+        border:1px solid rgba(9,255,3,0.18);
+        background:rgba(9,255,3,0.08);
+        color:rgba(255,255,255,0.82);
+        font-size:12px;
+      }
+      .mini{color:rgba(255,255,255,0.70);font-size:14px}
+      h1{
+        margin:0 0 10px;
+        font-size:42px;
+        letter-spacing:-0.03em;
+        line-height:1.08;
+      }
+      .lead{
+        margin:0;
+        color:rgba(255,255,255,0.74);
+        font-size:17px;
+        line-height:1.7;
+        max-width:92ch;
+      }
+
+      /* Cards / grid */
+      .card{
+        margin:18px 0 28px;
+        border:1px solid rgba(255,255,255,0.12);
+        background:rgba(255,255,255,0.06);
+        border-radius:20px;
+        padding:20px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.45);
+      }
+      .cardTop{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-bottom:12px;
+      }
+      h2{margin:0;font-size:18px}
+      h3{margin:0;font-size:16px}
+
+      .grid{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+      }
+
+      .tile{
+        border:1px solid rgba(255,255,255,0.12);
+        border-radius:18px;
+        padding:16px;
+        background:rgba(255,255,255,0.03);
+        transition:transform .12s ease, box-shadow .12s ease;
+      }
+      .tile:hover{
+        transform:translateY(-2px);
+        box-shadow:0 18px 40px rgba(0,0,0,0.35);
+      }
+
+      .tileTopRow{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-bottom:10px;
+      }
+
+      .chip{
+        padding:6px 10px;
+        border-radius:999px;
+        border:1px solid rgba(255,255,255,0.16);
+        background:rgba(255,255,255,0.04);
+        color:rgba(255,255,255,0.70);
+        font-size:12px;
+      }
+
+      .tag.soft{
+        padding:6px 10px;
+        border-radius:999px;
+        border:1px solid rgba(255,255,255,0.16);
+        background:rgba(255,255,255,0.04);
+        color:rgba(255,255,255,0.70);
+        font-size:12px;
+      }
+
+      /* Players */
+      .player{
+        border-radius:16px;
+        overflow:hidden;
+        border:1px solid rgba(255,255,255,0.10);
+        background:#000;
+      }
+      .player iframe{
+        width:100%;
+        aspect-ratio:16/9;
+        display:block;
+        border:0;
+      }
+
+      .audioWrap{
+        border-radius:16px;
+        border:1px solid rgba(255,255,255,0.10);
+        background:rgba(0,0,0,0.25);
+        padding:12px;
+      }
+      .audio{
+        width:100%;
+      }
+
+      /* Footer */
+      .footer{
+        border-top:1px solid rgba(255,255,255,0.10);
+        background:rgba(7,10,15,0.35);
+        backdrop-filter:blur(10px);
+      }
+      .foot{
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        padding:16px 18px;
+        flex-wrap:wrap;
+      }
+      .muted{color:rgba(255,255,255,0.55)}
+
+      @media (max-width: 820px){
+        .links{display:none}
+        .grid{grid-template-columns:1fr}
+        h1{font-size:34px}
+      }
+    </style>
+  </body>
+</html>
