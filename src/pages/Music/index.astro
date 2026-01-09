@@ -24,51 +24,39 @@ const scEmbedSrc = (trackUrl) => {
   return `https://w.soundcloud.com/player/?${p.toString()}`;
 };
 
-/*
-  Catalog structure:
-  Genre → Artist → Album → Tracks
-*/
-const catalog = [
+const audioByGenre = [
   {
     genre: "Country",
-    artists: [
+    albums: [
       {
-        name: "TGS",
-        albums: [
-          {
-            title: "Whiskey & Rust",
-            url: "https://soundcloud.com/thegamestoner/sets/whiskey-rust",
-            tracks: [
-              { title: "Barstool Sessions", url: "https://soundcloud.com/thegamestoner/barstool-sessions-1" },
-              { title: "Bowtie Blues", url: "https://soundcloud.com/thegamestoner/bowtie-blues-2" },
-              { title: "High on Summer", url: "https://soundcloud.com/thegamestoner/high-on-summer-3" },
-              { title: "Whiskey & Ashes", url: "https://soundcloud.com/thegamestoner/whiskey-ashes-4" },
-              { title: "A Good Man After All", url: "https://soundcloud.com/thegamestoner/a-good-man-after-all-5" },
-            ],
-          },
+        title: "Whiskey & Rust",
+        artist: "TGS",
+        url: "https://soundcloud.com/thegamestoner/sets/whiskey-rust",
+        tracks: [
+          { title: "Barstool Sessions", url: "https://soundcloud.com/thegamestoner/barstool-sessions-1" },
+          { title: "Bowtie Blues", url: "https://soundcloud.com/thegamestoner/bowtie-blues-2" },
+          { title: "High on Summer", url: "https://soundcloud.com/thegamestoner/high-on-summer-3" },
+          { title: "Whiskey & Ashes", url: "https://soundcloud.com/thegamestoner/whiskey-ashes-4" },
+          { title: "A Good Man After All", url: "https://soundcloud.com/thegamestoner/a-good-man-after-all-5" },
         ],
       },
     ],
   },
   {
     genre: "Hip-Hop / Rap",
-    artists: [
+    albums: [
       {
-        name: "TGS",
-        albums: [
-          {
-            title: "Smoke & Mirrors",
-            url: "https://soundcloud.com/thegamestoner/sets/smoke-mirrors",
-            tracks: [
-              { title: "Buffalo Born", url: "https://soundcloud.com/thegamestoner/the-7-1-6-1" },
-              { title: "Cruisin’ down Elmwood", url: "https://soundcloud.com/thegamestoner/cruisin-down-elmwood-2" },
-              { title: "Day Off", url: "https://soundcloud.com/thegamestoner/day-off-3" },
-              { title: "My Routine", url: "https://soundcloud.com/thegamestoner/routine-4" },
-              { title: "Mall Days", url: "https://soundcloud.com/thegamestoner/mall-rats-5" },
-              { title: "BRB", url: "https://soundcloud.com/thegamestoner/brb-6" },
-              { title: "Get Real", url: "https://soundcloud.com/thegamestoner/get-real-7" },
-            ],
-          },
+        title: "Smoke & Mirrors",
+        artist: "TGS",
+        url: "https://soundcloud.com/thegamestoner/sets/smoke-mirrors",
+        tracks: [
+          { title: "Buffalo Born", url: "https://soundcloud.com/thegamestoner/the-7-1-6-1" },
+          { title: "Cruisin’ down Elmwood", url: "https://soundcloud.com/thegamestoner/cruisin-down-elmwood-2" },
+          { title: "Day Off", url: "https://soundcloud.com/thegamestoner/day-off-3" },
+          { title: "My Routine", url: "https://soundcloud.com/thegamestoner/routine-4" },
+          { title: "Mall Days", url: "https://soundcloud.com/thegamestoner/mall-rats-5" },
+          { title: "BRB", url: "https://soundcloud.com/thegamestoner/brb-6" },
+          { title: "Get Real", url: "https://soundcloud.com/thegamestoner/get-real-7" },
         ],
       },
     ],
@@ -83,7 +71,7 @@ const catalog = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Music • {SITE_NAME}</title>
     <link rel="icon" href="/favicon.png" type="image/svg+xml" />
-    <meta name="description" content="The-Circle Music — videos and catalog by genre and artist." />
+    <meta name="description" content="The-Circle Music — videos and albums." />
   </head>
 
   <body>
@@ -110,13 +98,13 @@ const catalog = [
           <div class="heroCard">
             <div class="heroTop">
               <span class="kicker">The-Circle Music</span>
-              <span class="mini">Catalog</span>
+              <span class="mini">Videos & Albums</span>
             </div>
 
             <h1>Music</h1>
 
             <p class="lead">
-              Videos up top. Audio below — expand a genre, then an artist, then an album.
+              Videos up top. Audio below — tap a genre, then an album to reveal the tracks.
             </p>
           </div>
         </section>
@@ -150,75 +138,61 @@ const catalog = [
           </div>
         </section>
 
-        <!-- AUDIO (Genre → Artist → Album) -->
-        <section class="card" aria-label="Audio catalog">
+        <!-- AUDIO (Dropdowns) -->
+        <section class="card" aria-label="Audio library">
           <div class="cardTop">
             <h2>Audio</h2>
             <span class="tag soft">Tap to expand</span>
           </div>
 
           <div class="accordions">
-            {catalog.map((g) => (
-              <details class="acc">
+            {audioByGenre.map((g) => (
+              <details class="acc genreAcc">
                 <summary class="accSum">
                   <div class="sumLeft">
                     <span class="sumTitle">{g.genre}</span>
-                    <span class="chip soft">{g.artists.length} artist(s)</span>
+                    <span class="chip soft">{g.albums.length} album(s)</span>
                   </div>
                   <span class="chev" aria-hidden="true">▾</span>
                 </summary>
 
                 <div class="accBody">
-                  {g.artists.map((ar) => (
-                    <details class="acc nestedAcc">
+                  {g.albums.map((a) => (
+                    <details class="acc albumAcc">
                       <summary class="accSum">
                         <div class="sumLeft">
-                          <span class="sumTitle">{ar.name}</span>
-                          <span class="chip soft">{ar.albums.length} album(s)</span>
+                          <span class="sumTitle">{a.title} — {a.artist}</span>
+                          <span class="chip soft">{a.tracks.length} track(s)</span>
                         </div>
-                        <span class="chev" aria-hidden="true">▾</span>
+                        <div class="sumRight">
+                          <a class="btn ghost" href={a.url} target="_blank" rel="noreferrer" onclick="event.stopPropagation()">
+                            Open
+                          </a>
+                          <span class="chev" aria-hidden="true">▾</span>
+                        </div>
                       </summary>
 
-                      <div class="accBody">
-                        {ar.albums.map((a) => (
-                          <details class="acc albumAcc">
-                            <summary class="accSum">
-                              <div class="sumLeft">
-                                <span class="sumTitle">{a.title}</span>
-                                <span class="chip soft">{a.tracks.length} track(s)</span>
+                      <div class="accBody tracksBody">
+                        <div class="trackGrid">
+                          {a.tracks.map((t) => (
+                            <div class="trackItem">
+                              <div class="trackMeta">
+                                <span class="trackName">{t.title}</span>
+                                <a class="trackLink" href={t.url} target="_blank" rel="noreferrer">Link</a>
                               </div>
-                              <div class="sumRight">
-                                <a class="btn ghost" href={a.url} target="_blank" rel="noreferrer" onclick="event.stopPropagation()">
-                                  Open
-                                </a>
-                                <span class="chev" aria-hidden="true">▾</span>
-                              </div>
-                            </summary>
 
-                            <div class="accBody tracksBody">
-                              <div class="trackGrid">
-                                {a.tracks.map((t) => (
-                                  <div class="trackItem">
-                                    <div class="trackMeta">
-                                      <span class="trackName">{t.title}</span>
-                                      <a class="trackLink" href={t.url} target="_blank" rel="noreferrer">Link</a>
-                                    </div>
-
-                                    <iframe
-                                      class="scFrame"
-                                      title={`${ar.name} — ${a.title} — ${t.title}`}
-                                      scrolling="no"
-                                      frameborder="no"
-                                      allow="autoplay"
-                                      loading="lazy"
-                                      src={scEmbedSrc(t.url)}
-                                    ></iframe>
-                                  </div>
-                                ))}
-                              </div>
+                              <iframe
+                                class="scFrame"
+                                title={`${a.title} — ${t.title}`}
+                                scrolling="no"
+                                frameborder="no"
+                                allow="autoplay"
+                                loading="lazy"
+                                src={scEmbedSrc(t.url)}
+                              ></iframe>
                             </div>
-                          </details>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </details>
                   ))}
@@ -465,17 +439,16 @@ const catalog = [
       details[open] > summary .chev{transform:rotate(180deg)}
       .accBody{padding:12px 14px 14px}
 
-      details.nestedAcc{margin-top:10px}
-      details.nestedAcc, details.albumAcc{
+      details.albumAcc{
         border:1px solid rgba(255,255,255,0.10);
         background:rgba(0,0,0,0.12);
         border-radius:14px;
         overflow:hidden;
+        margin-top:10px;
       }
-      details.albumAcc{margin-top:10px}
-      details.nestedAcc > summary, details.albumAcc > summary{padding:12px 12px}
-
+      details.albumAcc > summary{padding:12px 12px}
       .tracksBody{padding-top:10px}
+
       .trackGrid{
         display:grid;
         grid-template-columns:repeat(2,minmax(0,1fr));
