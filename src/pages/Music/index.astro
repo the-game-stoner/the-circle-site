@@ -31,7 +31,6 @@ const audioByGenre = [
       {
         title: "Whiskey & Rust",
         artist: "TGS",
-        url: "https://soundcloud.com/thegamestoner/sets/whiskey-rust",
         tracks: [
           { title: "Barstool Sessions", url: "https://soundcloud.com/thegamestoner/barstool-sessions-1" },
           { title: "Bowtie Blues", url: "https://soundcloud.com/thegamestoner/bowtie-blues-2" },
@@ -48,7 +47,6 @@ const audioByGenre = [
       {
         title: "Smoke & Mirrors",
         artist: "TGS",
-        url: "https://soundcloud.com/thegamestoner/sets/smoke-mirrors",
         tracks: [
           { title: "Buffalo Born", url: "https://soundcloud.com/thegamestoner/the-7-1-6-1" },
           { title: "Cruisin’ down Elmwood", url: "https://soundcloud.com/thegamestoner/cruisin-down-elmwood-2" },
@@ -164,12 +162,7 @@ const audioByGenre = [
                           <span class="sumTitle">{a.title} — {a.artist}</span>
                           <span class="chip soft">{a.tracks.length} track(s)</span>
                         </div>
-                        <div class="sumRight">
-                          <a class="btn ghost" href={a.url} target="_blank" rel="noreferrer" onclick="event.stopPropagation()">
-                            Open
-                          </a>
-                          <span class="chev" aria-hidden="true">▾</span>
-                        </div>
+                        <span class="chev" aria-hidden="true">▾</span>
                       </summary>
 
                       <div class="accBody tracksBody">
@@ -400,19 +393,6 @@ const audioByGenre = [
         display:block;
         border:0;
       }
-
-      .btn{
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        padding:10px 14px;
-        border-radius:14px;
-        border:1px solid rgba(255,255,255,0.14);
-        background:rgba(255,255,255,0.04);
-        box-shadow:0 8px 25px rgba(0,0,0,0.22);
-        font-weight:600;
-      }
-      .btn.ghost{background:rgba(255,255,255,0.03)}
 
       .accordions{display:flex;flex-direction:column;gap:10px}
       details.acc{
