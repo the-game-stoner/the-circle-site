@@ -24,37 +24,51 @@ const scEmbedSrc = (trackUrl) => {
   return `https://w.soundcloud.com/player/?${p.toString()}`;
 };
 
-const audioByGenre = [
+/*
+  Catalog structure:
+  Genre → Artist → Album → Tracks
+*/
+const catalog = [
   {
     genre: "Country",
-    albums: [
+    artists: [
       {
-        title: "Whiskey & Rust",
-        url: "https://soundcloud.com/thegamestoner/sets/whiskey-rust",
-        tracks: [
-          { title: "Barstool Sessions", url: "https://soundcloud.com/thegamestoner/barstool-sessions-1" },
-          { title: "Bowtie Blues", url: "https://soundcloud.com/thegamestoner/bowtie-blues-2" },
-          { title: "High on Summer", url: "https://soundcloud.com/thegamestoner/high-on-summer-3" },
-          { title: "Whiskey & Ashes", url: "https://soundcloud.com/thegamestoner/whiskey-ashes-4" },
-          { title: "A Good Man After All", url: "https://soundcloud.com/thegamestoner/a-good-man-after-all-5" },
+        name: "TGS",
+        albums: [
+          {
+            title: "Whiskey & Rust",
+            url: "https://soundcloud.com/thegamestoner/sets/whiskey-rust",
+            tracks: [
+              { title: "Barstool Sessions", url: "https://soundcloud.com/thegamestoner/barstool-sessions-1" },
+              { title: "Bowtie Blues", url: "https://soundcloud.com/thegamestoner/bowtie-blues-2" },
+              { title: "High on Summer", url: "https://soundcloud.com/thegamestoner/high-on-summer-3" },
+              { title: "Whiskey & Ashes", url: "https://soundcloud.com/thegamestoner/whiskey-ashes-4" },
+              { title: "A Good Man After All", url: "https://soundcloud.com/thegamestoner/a-good-man-after-all-5" },
+            ],
+          },
         ],
       },
     ],
   },
   {
     genre: "Hip-Hop / Rap",
-    albums: [
+    artists: [
       {
-        title: "Smoke & Mirrors",
-        url: "https://soundcloud.com/thegamestoner/sets/smoke-mirrors",
-        tracks: [
-          { title: "Buffalo Born", url: "https://soundcloud.com/thegamestoner/the-7-1-6-1" },
-          { title: "Cruisin’ down Elmwood", url: "https://soundcloud.com/thegamestoner/cruisin-down-elmwood-2" },
-          { title: "Day Off", url: "https://soundcloud.com/thegamestoner/day-off-3" },
-          { title: "My Routine", url: "https://soundcloud.com/thegamestoner/routine-4" },
-          { title: "Mall Days", url: "https://soundcloud.com/thegamestoner/mall-rats-5" },
-          { title: "BRB", url: "https://soundcloud.com/thegamestoner/brb-6" },
-          { title: "Get Real", url: "https://soundcloud.com/thegamestoner/get-real-7" },
+        name: "TGS",
+        albums: [
+          {
+            title: "Smoke & Mirrors",
+            url: "https://soundcloud.com/thegamestoner/sets/smoke-mirrors",
+            tracks: [
+              { title: "Buffalo Born", url: "https://soundcloud.com/thegamestoner/the-7-1-6-1" },
+              { title: "Cruisin’ down Elmwood", url: "https://soundcloud.com/thegamestoner/cruisin-down-elmwood-2" },
+              { title: "Day Off", url: "https://soundcloud.com/thegamestoner/day-off-3" },
+              { title: "My Routine", url: "https://soundcloud.com/thegamestoner/routine-4" },
+              { title: "Mall Days", url: "https://soundcloud.com/thegamestoner/mall-rats-5" },
+              { title: "BRB", url: "https://soundcloud.com/thegamestoner/brb-6" },
+              { title: "Get Real", url: "https://soundcloud.com/thegamestoner/get-real-7" },
+            ],
+          },
         ],
       },
     ],
@@ -69,7 +83,7 @@ const audioByGenre = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Music • {SITE_NAME}</title>
     <link rel="icon" href="/favicon.png" type="image/svg+xml" />
-    <meta name="description" content="The-Circle Music — videos and albums by TGS." />
+    <meta name="description" content="The-Circle Music — videos and catalog by genre and artist." />
   </head>
 
   <body>
@@ -96,13 +110,13 @@ const audioByGenre = [
           <div class="heroCard">
             <div class="heroTop">
               <span class="kicker">The-Circle Music</span>
-              <span class="mini">Videos & Albums</span>
+              <span class="mini">Catalog</span>
             </div>
 
             <h1>Music</h1>
 
             <p class="lead">
-              Videos up top. Audio below — tap a genre, then an album to reveal the tracks.
+              Videos up top. Audio below — expand a genre, then an artist, then an album.
             </p>
           </div>
         </section>
@@ -136,61 +150,75 @@ const audioByGenre = [
           </div>
         </section>
 
-        <!-- AUDIO (Dropdowns) -->
-        <section class="card" aria-label="Audio library">
+        <!-- AUDIO (Genre → Artist → Album) -->
+        <section class="card" aria-label="Audio catalog">
           <div class="cardTop">
             <h2>Audio</h2>
             <span class="tag soft">Tap to expand</span>
           </div>
 
           <div class="accordions">
-            {audioByGenre.map((g) => (
-              <details class="acc genreAcc">
+            {catalog.map((g) => (
+              <details class="acc">
                 <summary class="accSum">
                   <div class="sumLeft">
                     <span class="sumTitle">{g.genre}</span>
-                    <span class="chip soft">{g.albums.length} album(s)</span>
+                    <span class="chip soft">{g.artists.length} artist(s)</span>
                   </div>
                   <span class="chev" aria-hidden="true">▾</span>
                 </summary>
 
                 <div class="accBody">
-                  {g.albums.map((a) => (
-                    <details class="acc albumAcc">
+                  {g.artists.map((ar) => (
+                    <details class="acc nestedAcc">
                       <summary class="accSum">
                         <div class="sumLeft">
-                          <span class="sumTitle">{a.title}</span>
-                          <span class="chip soft">{a.tracks.length} track(s)</span>
+                          <span class="sumTitle">{ar.name}</span>
+                          <span class="chip soft">{ar.albums.length} album(s)</span>
                         </div>
-                        <div class="sumRight">
-                          <a class="btn ghost" href={a.url} target="_blank" rel="noreferrer" onclick="event.stopPropagation()">
-                            Open
-                          </a>
-                          <span class="chev" aria-hidden="true">▾</span>
-                        </div>
+                        <span class="chev" aria-hidden="true">▾</span>
                       </summary>
 
-                      <div class="accBody tracksBody">
-                        <div class="trackGrid">
-                          {a.tracks.map((t) => (
-                            <div class="trackItem">
-                              <div class="trackMeta">
-                                <span class="trackName">{t.title}</span>
-                                <a class="trackLink" href={t.url} target="_blank" rel="noreferrer">Link</a>
+                      <div class="accBody">
+                        {ar.albums.map((a) => (
+                          <details class="acc albumAcc">
+                            <summary class="accSum">
+                              <div class="sumLeft">
+                                <span class="sumTitle">{a.title}</span>
+                                <span class="chip soft">{a.tracks.length} track(s)</span>
                               </div>
+                              <div class="sumRight">
+                                <a class="btn ghost" href={a.url} target="_blank" rel="noreferrer" onclick="event.stopPropagation()">
+                                  Open
+                                </a>
+                                <span class="chev" aria-hidden="true">▾</span>
+                              </div>
+                            </summary>
 
-                              <iframe
-                                class="scFrame"
-                                title={`${a.title} — ${t.title}`}
-                                scrolling="no"
-                                frameborder="no"
-                                allow="autoplay"
-                                loading="lazy"
-                                src={scEmbedSrc(t.url)}
-                              ></iframe>
+                            <div class="accBody tracksBody">
+                              <div class="trackGrid">
+                                {a.tracks.map((t) => (
+                                  <div class="trackItem">
+                                    <div class="trackMeta">
+                                      <span class="trackName">{t.title}</span>
+                                      <a class="trackLink" href={t.url} target="_blank" rel="noreferrer">Link</a>
+                                    </div>
+
+                                    <iframe
+                                      class="scFrame"
+                                      title={`${ar.name} — ${a.title} — ${t.title}`}
+                                      scrolling="no"
+                                      frameborder="no"
+                                      allow="autoplay"
+                                      loading="lazy"
+                                      src={scEmbedSrc(t.url)}
+                                    ></iframe>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          ))}
-                        </div>
+                          </details>
+                        ))}
                       </div>
                     </details>
                   ))}
@@ -232,7 +260,6 @@ const audioByGenre = [
       .page{min-height:100vh;display:flex;flex-direction:column}
       main{flex:1}
 
-      /* Top nav */
       .top{
         position:sticky;
         top:0;
@@ -261,7 +288,6 @@ const audioByGenre = [
       .links a{color:rgba(255,255,255,0.78);font-size:14px}
       .links a:hover{color:rgba(255,255,255,0.95)}
 
-      /* Hero */
       .hero{padding:34px 0 12px}
       .heroCard{
         border:1px solid rgba(255,255,255,0.12);
@@ -289,6 +315,7 @@ const audioByGenre = [
         font-size:12px;
       }
       .mini{color:rgba(255,255,255,0.70);font-size:14px}
+
       h1{
         margin:0 0 10px;
         font-size:42px;
@@ -303,7 +330,6 @@ const audioByGenre = [
         max-width:92ch;
       }
 
-      /* Cards */
       .card{
         margin:18px 0 28px;
         border:1px solid rgba(255,255,255,0.12);
@@ -321,7 +347,6 @@ const audioByGenre = [
         margin-bottom:12px;
       }
 
-      /* Base tiles */
       .grid{
         display:grid;
         grid-template-columns:repeat(2,minmax(0,1fr));
@@ -378,7 +403,6 @@ const audioByGenre = [
         font-size:12px;
       }
 
-      /* Featured center video */
       .videoTile.featuredVideo{
         border:2px solid rgba(9,255,3,0.40);
         box-shadow:
@@ -403,7 +427,6 @@ const audioByGenre = [
         border:0;
       }
 
-      /* Buttons */
       .btn{
         display:inline-flex;
         align-items:center;
@@ -414,24 +437,16 @@ const audioByGenre = [
         background:rgba(255,255,255,0.04);
         box-shadow:0 8px 25px rgba(0,0,0,0.22);
         font-weight:600;
-        transition:transform .12s ease, background .12s ease, box-shadow .12s ease;
-      }
-      .btn:hover{
-        transform:translateY(-1px);
-        background:rgba(255,255,255,0.07);
       }
       .btn.ghost{background:rgba(255,255,255,0.03)}
 
-      /* Accordions */
       .accordions{display:flex;flex-direction:column;gap:10px}
-
       details.acc{
         border:1px solid rgba(255,255,255,0.12);
         background:rgba(255,255,255,0.03);
         border-radius:16px;
         overflow:hidden;
       }
-
       summary.accSum{
         list-style:none;
         cursor:pointer;
@@ -442,51 +457,36 @@ const audioByGenre = [
         gap:12px;
         user-select:none;
       }
-
       summary.accSum::-webkit-details-marker{display:none}
-
       .sumLeft{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
       .sumRight{display:flex;align-items:center;gap:10px}
       .sumTitle{font-weight:900;letter-spacing:-0.01em}
-
-      .chev{
-        opacity:0.75;
-        transition:transform .18s ease;
-        font-size:14px;
-      }
-
+      .chev{opacity:0.75;font-size:14px;transition:transform .18s ease}
       details[open] > summary .chev{transform:rotate(180deg)}
-
       .accBody{padding:12px 14px 14px}
 
-      /* Nested album accordion styling */
-      details.albumAcc{
+      details.nestedAcc{margin-top:10px}
+      details.nestedAcc, details.albumAcc{
         border:1px solid rgba(255,255,255,0.10);
         background:rgba(0,0,0,0.12);
         border-radius:14px;
         overflow:hidden;
-        margin-top:10px;
       }
-
-      details.albumAcc > summary{
-        padding:12px 12px;
-      }
+      details.albumAcc{margin-top:10px}
+      details.nestedAcc > summary, details.albumAcc > summary{padding:12px 12px}
 
       .tracksBody{padding-top:10px}
-
       .trackGrid{
         display:grid;
         grid-template-columns:repeat(2,minmax(0,1fr));
         gap:12px;
       }
-
       .trackItem{
         border:1px solid rgba(255,255,255,0.10);
         border-radius:16px;
         padding:12px;
         background:rgba(0,0,0,0.18);
       }
-
       .trackMeta{
         display:flex;
         align-items:center;
@@ -501,7 +501,6 @@ const audioByGenre = [
         border-bottom:1px solid rgba(255,255,255,0.18);
       }
       .trackLink:hover{color:rgba(255,255,255,0.92)}
-
       .scFrame{
         width:100%;
         height:166px;
@@ -511,7 +510,6 @@ const audioByGenre = [
         display:block;
       }
 
-      /* Footer */
       .footer{
         border-top:1px solid rgba(255,255,255,0.10);
         background:rgba(7,10,15,0.35);
@@ -529,10 +527,8 @@ const audioByGenre = [
       @media (max-width: 900px){
         .videosGrid{grid-template-columns:1fr;}
         .videoTile.featuredVideo{transform:none}
-        .videoTile.featuredVideo:hover{transform:translateY(-2px)}
         .trackGrid{grid-template-columns:1fr}
       }
-
       @media (max-width: 820px){
         .links{display:none}
         h1{font-size:34px}
