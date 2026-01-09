@@ -1,33 +1,71 @@
 ---
 const SITE_NAME = "The-Circle";
 
-/**
- * VIDEOS (Mall Days in the middle)
- */
+/* =============================
+   VIDEOS (Mall Days centered)
+============================= */
 const videoTracks = [
   { title: "Video", youtubeId: "9CdIK8tILPo" },
   { title: "Mall Days", youtubeId: "GZ-o7LNu1Vg", featured: true },
   { title: "Video", youtubeId: "HFPc52w-VqI" },
 ];
 
-/**
- * AUDIO TRACKS
- * You can point src to:
- * - R2 public URL (recommended)  e.g. "https://<your-public-domain-or-r2-url>/Song.mp3"
- * - or local public folder        e.g. "/Music/Song.mp3"  (case-sensitive)
- *
- * Add them like:
- * { title: "Backroad Something", genre: "Country", src: "https://....mp3" }
- */
-const audioTracks = [
-  // { title: "Backroad Something", genre: "Country", src: "https://YOUR-R2-PUBLIC-URL/BackroadSomething.mp3" },
-  // { title: "Bar Jam", genre: "Country", src: "https://YOUR-R2-PUBLIC-URL/BarJam.mp3" },
-  // { title: "Midnight Talk", genre: "Rap", src: "https://YOUR-R2-PUBLIC-URL/MidnightTalk.mp3" },
-  // { title: "Pieces", genre: "Rock/Metal", src: "https://YOUR-R2-PUBLIC-URL/Pieces.mp3" },
-];
+/* =============================
+   SOUNDCLOUD AUDIO (Option B)
+   Genre → Album → Track players
+============================= */
 
-const audioGenres = ["Country", "Rap", "Rock/Metal", "Other"];
-const norm = (g) => (audioGenres.includes(g) ? g : "Other");
+const scEmbedSrc = (trackUrl) => {
+  const p = new URLSearchParams({
+    url: trackUrl,
+    color: "#09ff03",
+    auto_play: "false",
+    hide_related: "true",
+    show_comments: "false",
+    show_user: "false",
+    show_reposts: "false",
+    show_teaser: "false",
+    visual: "false",
+  });
+  return `https://w.soundcloud.com/player/?${p.toString()}`;
+};
+
+const audioByGenre = [
+  {
+    genre: "Country",
+    albums: [
+      {
+        title: "Whiskey & Rust",
+        url: "https://soundcloud.com/thegamestoner/sets/whiskey-rust",
+        tracks: [
+          { title: "Barstool Sessions", url: "https://soundcloud.com/thegamestoner/barstool-sessions-1" },
+          { title: "Bowtie Blues", url: "https://soundcloud.com/thegamestoner/bowtie-blues-2" },
+          { title: "High on Summer", url: "https://soundcloud.com/thegamestoner/high-on-summer-3" },
+          { title: "Whiskey & Ashes", url: "https://soundcloud.com/thegamestoner/whiskey-ashes-4" },
+          { title: "A Good Man After All", url: "https://soundcloud.com/thegamestoner/a-good-man-after-all-5" },
+        ],
+      },
+    ],
+  },
+  {
+    genre: "Hip-Hop / Rap",
+    albums: [
+      {
+        title: "Smoke & Mirrors",
+        url: "https://soundcloud.com/thegamestoner/sets/smoke-mirrors",
+        tracks: [
+          { title: "Buffalo Born", url: "https://soundcloud.com/thegamestoner/the-7-1-6-1" },
+          { title: "Cruisin’ down Elmwood", url: "https://soundcloud.com/thegamestoner/cruisin-down-elmwood-2" },
+          { title: "Day Off", url: "https://soundcloud.com/thegamestoner/day-off-3" },
+          { title: "My Routine", url: "https://soundcloud.com/thegamestoner/routine-4" },
+          { title: "Mall Days", url: "https://soundcloud.com/thegamestoner/mall-rats-5" },
+          { title: "BRB", url: "https://soundcloud.com/thegamestoner/brb-6" },
+          { title: "Get Real", url: "https://soundcloud.com/thegamestoner/get-real-7" },
+        ],
+      },
+    ],
+  },
+];
 ---
 
 <!DOCTYPE html>
@@ -37,7 +75,7 @@ const norm = (g) => (audioGenres.includes(g) ? g : "Other");
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Music • {SITE_NAME}</title>
     <link rel="icon" href="/favicon.png" type="image/svg+xml" />
-    <meta name="description" content="The-Circle Music — original tracks and videos by TGS." />
+    <meta name="description" content="The-Circle Music — videos and albums by TGS." />
   </head>
 
   <body>
@@ -48,7 +86,6 @@ const norm = (g) => (audioGenres.includes(g) ? g : "Other");
             <img src="/favicon.png" alt="" class="logo" />
             <span>{SITE_NAME}</span>
           </a>
-
           <nav class="links">
             <a href="/discord">Discord</a>
             <a href="/league">League</a>
@@ -64,42 +101,26 @@ const norm = (g) => (audioGenres.includes(g) ? g : "Other");
           <div class="heroCard">
             <div class="heroTop">
               <span class="kicker">The-Circle Music</span>
-              <span class="mini">Original tracks by TGS</span>
+              <span class="mini">Videos & Albums</span>
             </div>
-
             <h1>Music</h1>
-
-            <p class="lead">
-              A growing library — videos up top, audio tracks below.
-            </p>
-
-            <p class="fine">
-              Audio is streamed directly from my official library. If you’re a creator, more info and downloads can come later.
-            </p>
+            <p class="lead">Videos up top. Audio organized by genre and album below.</p>
           </div>
         </section>
 
-        {/* VIDEOS */}
-        <section class="card" aria-label="Music videos">
+        <!-- VIDEOS -->
+        <section class="card">
           <div class="cardTop">
             <h2>Videos</h2>
-            <span class="tag soft">{videoTracks.length} video(s)</span>
           </div>
-
           <div class="grid videosGrid">
             {videoTracks.map((v) => (
               <article class={`tile videoTile ${v.featured ? "featuredVideo" : ""}`}>
-                <div class="tileTop">
-                  <h3>{v.title}</h3>
-                  <span class="chip">Video</span>
-                </div>
-
+                <h3>{v.title}</h3>
                 <div class="player">
                   <iframe
                     src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}`}
-                    title={v.title}
                     loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen
                   ></iframe>
                 </div>
@@ -108,55 +129,41 @@ const norm = (g) => (audioGenres.includes(g) ? g : "Other");
           </div>
         </section>
 
-        {/* AUDIO */}
-        <section class="card" aria-label="Audio tracks">
+        <!-- AUDIO -->
+        <section class="card">
           <div class="cardTop">
             <h2>Audio</h2>
-            <span class="tag soft">{audioTracks.length} track(s)</span>
           </div>
 
-          {audioTracks.length === 0 ? (
-            <div class="callout">
-              <h3 class="calloutTitle">Audio library coming online</h3>
-              <p class="text">
-                Add your R2 MP3 links into <span class="mono">audioTracks</span> at the top of this page and the players will appear here automatically.
-              </p>
-            </div>
-          ) : (
-            <>
-              {audioGenres.map((g) => {
-                const list = audioTracks.filter(t => norm(t.genre) === g);
-                if (list.length === 0) return null;
+          {audioByGenre.map((g) => (
+            <div class="genreBlock">
+              <h3 class="genreTitle">{g.genre}</h3>
 
-                return (
-                  <div class="stack" aria-label={`${g} audio`}>
-                    <div class="subHead">
-                      <h3 class="subTitle">{g}</h3>
-                      <span class="chip soft">{list.length}</span>
-                    </div>
-
-                    <div class="grid">
-                      {list.map((t) => (
-                        <article class="tile">
-                          <div class="tileTop">
-                            <h3>{t.title}</h3>
-                            <span class="chip soft">Audio</span>
-                          </div>
-
-                          <div class="audioWrap">
-                            <audio class="audio" controls preload="metadata">
-                              <source src={t.src} type="audio/mpeg" />
-                              Your browser does not support the audio element.
-                            </audio>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
+              {g.albums.map((a) => (
+                <article class="albumCard">
+                  <div class="albumTop">
+                    <h3>{a.title}</h3>
+                    <a class="btn ghost" href={a.url} target="_blank" rel="noreferrer">Open</a>
                   </div>
-                );
-              })}
-            </>
-          )}
+
+                  <div class="trackGrid">
+                    {a.tracks.map((t) => (
+                      <div class="trackItem">
+                        <div class="trackMeta">
+                          <span class="trackName">{t.title}</span>
+                        </div>
+                        <iframe
+                          class="scFrame"
+                          src={scEmbedSrc(t.url)}
+                          loading="lazy"
+                        ></iframe>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ))}
         </section>
       </main>
 
@@ -167,266 +174,5 @@ const norm = (g) => (audioGenres.includes(g) ? g : "Other");
         </div>
       </footer>
     </div>
-
-    <style is:global>
-      html, body { height: 100%; }
-
-      body{
-        margin:0;
-        min-height:100vh;
-        font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-        color:rgba(255,255,255,0.92);
-        background-image:
-          radial-gradient(900px 500px at 15% 10%, rgba(9,255,3,0.14), transparent 60%),
-          radial-gradient(800px 450px at 85% 15%, rgba(120,170,255,0.18), transparent 55%),
-          radial-gradient(700px 450px at 55% 95%, rgba(255,170,120,0.10), transparent 55%),
-          linear-gradient(#070a0f, #070a0f);
-        background-repeat:no-repeat;
-        background-size:100% 100%;
-        background-attachment:fixed;
-      }
-
-      a{color:inherit;text-decoration:none}
-      .container{max-width:1020px;margin:0 auto;padding:0 18px}
-      .page{min-height:100vh;display:flex;flex-direction:column}
-      main{flex:1}
-
-      /* Top nav */
-      .top{
-        position:sticky;
-        top:0;
-        z-index:10;
-        backdrop-filter:blur(10px);
-        background:rgba(7,10,15,0.55);
-        border-bottom:1px solid rgba(255,255,255,0.10);
-      }
-      .nav{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:14px 18px;
-        gap:14px;
-      }
-      .brand{
-        display:flex;
-        gap:10px;
-        align-items:center;
-        font-weight:900;
-        letter-spacing:-0.02em;
-        white-space:nowrap;
-      }
-      .logo{width:30px;height:30px;display:block}
-      .links{display:flex;gap:14px;align-items:center}
-      .links a{color:rgba(255,255,255,0.78);font-size:14px}
-      .links a:hover{color:rgba(255,255,255,0.95)}
-
-      /* Hero */
-      .hero{padding:34px 0 12px}
-      .heroCard{
-        border:1px solid rgba(255,255,255,0.12);
-        background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
-        border-radius:22px;
-        padding:22px;
-        box-shadow:0 24px 70px rgba(0,0,0,0.45);
-      }
-      .heroTop{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:12px;
-        flex-wrap:wrap;
-        margin-bottom:10px;
-      }
-      .kicker{
-        display:inline-flex;
-        align-items:center;
-        padding:6px 10px;
-        border-radius:999px;
-        border:1px solid rgba(9,255,3,0.18);
-        background:rgba(9,255,3,0.08);
-        color:rgba(255,255,255,0.82);
-        font-size:12px;
-      }
-      .mini{color:rgba(255,255,255,0.70);font-size:14px}
-      h1{
-        margin:0 0 10px;
-        font-size:42px;
-        letter-spacing:-0.03em;
-        line-height:1.08;
-      }
-      .lead{
-        margin:0;
-        color:rgba(255,255,255,0.74);
-        font-size:17px;
-        line-height:1.7;
-        max-width:92ch;
-      }
-      .fine{
-        margin-top:10px;
-        color:rgba(255,255,255,0.55);
-        font-size:13px;
-      }
-      .mono{
-        font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-        font-size:0.95em;
-        color:rgba(255,255,255,0.72);
-      }
-
-      /* Cards */
-      .card{
-        margin:18px 0 28px;
-        border:1px solid rgba(255,255,255,0.12);
-        background:rgba(255,255,255,0.06);
-        border-radius:20px;
-        padding:20px;
-        box-shadow:0 20px 60px rgba(0,0,0,0.45);
-      }
-      .cardTop{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:10px;
-        flex-wrap:wrap;
-        margin-bottom:12px;
-      }
-      h2{margin:0;font-size:22px}
-      h3{margin:0;font-size:16px}
-
-      .grid{
-        display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:12px;
-      }
-
-      /* Videos row: force 3 columns on desktop */
-      .videosGrid{
-        grid-template-columns:repeat(3,minmax(0,1fr));
-        gap:14px;
-      }
-
-      .tile{
-        border:1px solid rgba(255,255,255,0.12);
-        border-radius:18px;
-        padding:16px;
-        background:rgba(255,255,255,0.03);
-        transition:transform .12s ease, box-shadow .12s ease;
-      }
-      .tile:hover{
-        transform:translateY(-2px);
-        box-shadow:0 18px 40px rgba(0,0,0,0.35);
-      }
-      .tileTop{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:10px;
-        flex-wrap:wrap;
-        margin-bottom:10px;
-      }
-
-      .chip{
-        padding:6px 10px;
-        border-radius:999px;
-        border:1px solid rgba(9,255,3,0.20);
-        background:rgba(9,255,3,0.08);
-        color:rgba(255,255,255,0.82);
-        font-size:12px;
-      }
-      .chip.soft{
-        border-color:rgba(255,255,255,0.16);
-        background:rgba(255,255,255,0.04);
-        color:rgba(255,255,255,0.70);
-      }
-      .tag.soft{
-        padding:6px 10px;
-        border-radius:999px;
-        border:1px solid rgba(255,255,255,0.16);
-        background:rgba(255,255,255,0.04);
-        color:rgba(255,255,255,0.70);
-        font-size:12px;
-      }
-
-      /* Featured (center) video styling */
-      .videoTile.featuredVideo{
-        border:2px solid rgba(9,255,3,0.40);
-        box-shadow:
-          0 0 0 1px rgba(9,255,3,0.20) inset,
-          0 18px 40px rgba(9,255,3,0.10);
-        transform:translateY(-1px) scale(1.03);
-      }
-      .videoTile.featuredVideo:hover{
-        transform:translateY(-2px) scale(1.035);
-      }
-
-      /* Video player */
-      .player{
-        border-radius:16px;
-        overflow:hidden;
-        border:1px solid rgba(255,255,255,0.10);
-        background:#000;
-      }
-      .player iframe{
-        width:100%;
-        aspect-ratio:16/9;
-        display:block;
-        border:0;
-      }
-
-      /* Audio player */
-      .audioWrap{
-        border-radius:16px;
-        border:1px solid rgba(255,255,255,0.10);
-        background:rgba(0,0,0,0.20);
-        padding:12px;
-      }
-      .audio{width:100%}
-
-      /* Callout / stack */
-      .callout{
-        margin-top:12px;
-        border:1px solid rgba(255,255,255,0.12);
-        border-radius:18px;
-        padding:16px;
-        background:rgba(255,255,255,0.03);
-      }
-      .calloutTitle{margin:0 0 6px;font-size:16px}
-      .text{margin:0;color:rgba(255,255,255,0.72);line-height:1.7}
-
-      .stack{margin-top:16px}
-      .subHead{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        margin:0 0 10px;
-      }
-      .subTitle{font-size:16px}
-
-      /* Footer */
-      .footer{
-        border-top:1px solid rgba(255,255,255,0.10);
-        background:rgba(7,10,15,0.35);
-        backdrop-filter:blur(10px);
-      }
-      .foot{
-        display:flex;
-        justify-content:space-between;
-        gap:12px;
-        padding:16px 18px;
-        flex-wrap:wrap;
-      }
-      .muted{color:rgba(255,255,255,0.55)}
-
-      @media (max-width: 900px){
-        .videosGrid{grid-template-columns:1fr;}
-        .videoTile.featuredVideo{transform:none}
-        .videoTile.featuredVideo:hover{transform:translateY(-2px)}
-      }
-
-      @media (max-width: 820px){
-        .links{display:none}
-        .grid{grid-template-columns:1fr}
-        h1{font-size:34px}
-      }
-    </style>
   </body>
 </html>
