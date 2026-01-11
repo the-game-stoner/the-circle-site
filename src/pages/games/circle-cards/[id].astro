@@ -11,15 +11,32 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Circle Cards • Room {id} • {SITE_NAME}</title>
-    <meta name="description" content={`Circle Cards room ${id} on The-Circle`} />
+    <meta name="description" content={`Circle Cards room ${id} on The-Circle.`} />
     <link rel="icon" href="/favicon.png" type="image/png" />
   </head>
 
   <body>
+    <header class="top">
+      <div class="container nav">
+        <a class="brand" href="/" aria-label={`${SITE_NAME} Home`}>
+          <img src="/favicon.png" alt="" class="logo" />
+          <span class="name">{SITE_NAME}</span>
+        </a>
+
+        <nav class="links" aria-label="Primary">
+          <a href="/discord" class="navLink">Discord</a>
+          <a href="/league" class="navLink">League</a>
+          <a href="/music" class="navLink">Music</a>
+          <a href="/games" class="navLink">Games</a>
+          <a href="/blog" class="navLink">Blog</a>
+        </nav>
+      </div>
+    </header>
+
     <main class="wrap">
       <div class="topline">
         <h1>Circle Cards <span class="muted">• Room {id}</span></h1>
-        <a class="back muted" href="/games/circle-cards">New Room</a>
+        <a class="back" href="/games/circle-cards">New Room</a>
       </div>
 
       <section class="card">
@@ -67,9 +84,9 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       </section>
     </main>
 
-    <script define:vars={{ id, API_URL }}>
-      const ROOM = id;
-      const API = API_URL.replace(/\/+$/, "");
+    <script>
+      const ROOM = "{id}";
+      const API = "{API_URL}";
 
       let playerToken = localStorage.getItem("cc_playerToken_" + ROOM) || "";
       let hostToken = localStorage.getItem("cc_host_" + ROOM) || "";
@@ -87,36 +104,39 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         return h;
       }
 
-      async function readJson(r) {
+      async function safeJson(r) {
         const text = await r.text();
-        let data = {};
-        try { data = JSON.parse(text); } catch {}
-        return { text, data };
+        try { return { ok: r.ok, status: r.status, data: JSON.parse(text), text }; }
+        catch { return { ok: r.ok, status: r.status, data: {}, text }; }
       }
 
       async function load() {
-        const r = await fetch(API + "/api/rooms/" + ROOM);
-        const { text, data } = await readJson(r);
-
-        if (!r.ok) {
-          elPrompt.textContent = data.error || `Failed (${r.status})`;
+        let r;
+        try {
+          r = await fetch(API + "/api/rooms/" + ROOM);
+        } catch (e) {
+          elPrompt.textContent = "Network error: " + (e?.message || e);
           elState.textContent = "ERROR";
-          elCards.innerHTML = `<div class="muted">${(data.error || text).slice(0, 220)}</div>`;
+          elCards.innerHTML = `<div class="muted">Unable to load room (network).</div>`;
+          return;
+        }
+
+        const { ok, status, data, text } = await safeJson(r);
+        if (!ok) {
+          elPrompt.textContent = data.error || `Failed (${status}): ${text.slice(0, 200)}`;
+          elState.textContent = "ERROR";
+          elCards.innerHTML = `<div class="muted">Unable to load room.</div>`;
           return;
         }
 
         elPrompt.textContent = data.prompt;
         elState.textContent = (data.state || "unknown").toUpperCase();
-
         renderWinners(data.winners || []);
         renderCards(data);
       }
 
       function renderWinners(winners) {
-        if (!winners.length) {
-          elWinners.textContent = "No winners yet.";
-          return;
-        }
+        if (!winners.length) { elWinners.textContent = "No winners yet."; return; }
         elWinners.innerHTML = winners
           .slice(-10).reverse()
           .map(w => `<div>Round ${w.round}: <b>${escapeHtml(w.text)}</b> (${w.votes} votes)</div>`)
@@ -138,7 +158,7 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         }
 
         list.forEach(c => {
-          const votes = room.votes?.[c.submissionId] || 0;
+          const votes = (room.votes && room.votes[c.submissionId]) ? room.votes[c.submissionId] : 0;
           const div = document.createElement("div");
           div.className = "tile";
           div.innerHTML = `
@@ -153,14 +173,21 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
 
       async function join() {
         const name = document.getElementById("name").value;
-        const r = await fetch(API + "/api/rooms/" + ROOM + "/join", {
-          method: "POST",
-          headers: headers(),
-          body: JSON.stringify({ name }),
-        });
 
-        const { text, data } = await readJson(r);
-        if (!r.ok) { me.textContent = data.error || `Join failed (${r.status})`; return; }
+        let r;
+        try {
+          r = await fetch(API + "/api/rooms/" + ROOM + "/join", {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ name }),
+          });
+        } catch (e) {
+          me.textContent = "Network error: " + (e?.message || e);
+          return;
+        }
+
+        const { ok, status, data, text } = await safeJson(r);
+        if (!ok) { me.textContent = data.error || `Join failed (${status}): ${text.slice(0, 200)}`; return; }
 
         playerToken = data.playerToken;
         localStorage.setItem("cc_playerToken_" + ROOM, playerToken);
@@ -173,14 +200,20 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         const out = document.getElementById("submitOut");
         if (!playerToken) { out.textContent = "Join first."; return; }
 
-        const r = await fetch(API + "/api/rooms/" + ROOM + "/submit", {
-          method: "POST",
-          headers: headers(),
-          body: JSON.stringify({ text: textVal }),
-        });
+        let r;
+        try {
+          r = await fetch(API + "/api/rooms/" + ROOM + "/submit", {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ text: textVal }),
+          });
+        } catch (e) {
+          out.textContent = "Network error: " + (e?.message || e);
+          return;
+        }
 
-        const { text, data } = await readJson(r);
-        out.textContent = r.ok ? "Submitted ✅" : (data.error || `Submit failed (${r.status}): ${text.slice(0, 120)}`);
+        const { ok, status, data, text } = await safeJson(r);
+        out.textContent = ok ? "Submitted ✅" : (data.error || `Submit failed (${status}): ${text.slice(0, 200)}`);
         load();
       }
 
@@ -188,25 +221,33 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         const out = document.getElementById("voteOut");
         if (!playerToken) { out.textContent = "Join first."; return; }
 
-        const r = await fetch(API + "/api/rooms/" + ROOM + "/vote", {
-          method: "POST",
-          headers: headers(),
-          body: JSON.stringify({ submissionId }),
-        });
+        let r;
+        try {
+          r = await fetch(API + "/api/rooms/" + ROOM + "/vote", {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ submissionId }),
+          });
+        } catch (e) {
+          out.textContent = "Network error: " + (e?.message || e);
+          return;
+        }
 
-        const { text, data } = await readJson(r);
-        out.textContent = r.ok ? "Voted ✅" : (data.error || `Vote failed (${r.status}): ${text.slice(0, 120)}`);
+        const { ok, status, data, text } = await safeJson(r);
+        out.textContent = ok ? "Voted ✅" : (data.error || `Vote failed (${status}): ${text.slice(0, 200)}`);
         load();
       }
 
       async function reveal() {
-        const r = await fetch(API + "/api/rooms/" + ROOM + "/reveal", {
-          method: "POST",
-          headers: headers(),
-        });
-
-        const { text, data } = await readJson(r);
-        if (!r.ok) alert(data.error || `Reveal failed (${r.status}): ${text.slice(0, 160)}`);
+        let r;
+        try {
+          r = await fetch(API + "/api/rooms/" + ROOM + "/reveal", { method: "POST", headers: headers() });
+        } catch {
+          alert("Network error during reveal.");
+          return;
+        }
+        const { ok, status, data, text } = await safeJson(r);
+        if (!ok) alert(data.error || `Reveal failed (${status}): ${text.slice(0, 200)}`);
         load();
       }
 
@@ -214,14 +255,19 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         const promptText = prompt("Next prompt:");
         if (!promptText) return;
 
-        const r = await fetch(API + "/api/rooms/" + ROOM + "/next", {
-          method: "POST",
-          headers: headers(),
-          body: JSON.stringify({ prompt: promptText }),
-        });
-
-        const { text, data } = await readJson(r);
-        if (!r.ok) alert(data.error || `Next round failed (${r.status}): ${text.slice(0, 160)}`);
+        let r;
+        try {
+          r = await fetch(API + "/api/rooms/" + ROOM + "/next", {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ prompt: promptText }),
+          });
+        } catch {
+          alert("Network error during next round.");
+          return;
+        }
+        const { ok, status, data, text } = await safeJson(r);
+        if (!ok) alert(data.error || `Next round failed (${status}): ${text.slice(0, 200)}`);
         load();
       }
 
@@ -241,11 +287,55 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
     </script>
 
     <style>
-      body{ margin:0; font-family:system-ui; background:#070a0f; color:#fff; }
-      .wrap{ max-width:1100px; margin:30px auto; padding:0 18px; }
-      .topline{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+      :root{
+        --bg:#070a0f;
+        --panel:rgba(255,255,255,.06);
+        --panel2:rgba(255,255,255,.04);
+        --border:rgba(255,255,255,.12);
+        --text:rgba(255,255,255,.92);
+        --muted:rgba(255,255,255,.68);
+        --muted2:rgba(255,255,255,.55);
+        --accent:#09ff03;
+        --shadow:0 18px 44px rgba(0,0,0,.35);
+      }
+      *{ box-sizing:border-box; }
+      body{ margin:0; font-family:system-ui; background:var(--bg); color:var(--text); }
 
-      .card{ border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); padding:18px; border-radius:16px; margin:14px 0; }
+      .top{
+        position:sticky; top:0; z-index:10;
+        backdrop-filter:blur(12px);
+        background:rgba(7,10,15,.65);
+        border-bottom:1px solid rgba(255,255,255,.10);
+      }
+      .container{ max-width:1060px; margin:0 auto; padding:0 18px; }
+      .nav{ display:flex; justify-content:space-between; align-items:center; gap:14px; padding:14px 0; }
+      .brand{ display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:-.02em; }
+      .logo{ width:28px; height:28px; filter:drop-shadow(0 0 10px rgba(9,255,3,.18)); }
+      .name{ font-size:15px; opacity:.95; }
+      .links{ display:flex; gap:14px; font-size:14px; }
+      .navLink{ color:rgba(255,255,255,.78); padding:8px 10px; border-radius:12px; }
+      .navLink:hover{ color:rgba(255,255,255,.95); background:rgba(255,255,255,.06); }
+
+      .wrap{ max-width:1100px; margin:26px auto; padding:0 18px; }
+
+      .topline{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+      .back{
+        color:rgba(255,255,255,.80);
+        border:1px solid rgba(255,255,255,.14);
+        background:rgba(255,255,255,.04);
+        padding:10px 12px;
+        border-radius:12px;
+      }
+      .back:hover{ background:rgba(255,255,255,.06); color:rgba(255,255,255,.95); }
+
+      .card{
+        border:1px solid rgba(255,255,255,.12);
+        background:var(--panel);
+        padding:18px;
+        border-radius:16px;
+        margin:14px 0;
+        box-shadow:var(--shadow);
+      }
       .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
       .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 
@@ -258,19 +348,18 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
 
       textarea, input{
         width:100%;
-        box-sizing:border-box;
+        margin:10px 0 12px;
         padding:10px;
         border-radius:12px;
         border:1px solid rgba(255,255,255,.14);
         background:rgba(0,0,0,.25);
         color:#fff;
-        margin:10px 0 12px;
       }
-      textarea{ min-height:90px; resize:vertical; }
+      textarea{ min-height:90px; }
 
       .controls{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
 
-      .tile{ border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); border-radius:14px; padding:12px; }
+      .tile{ border:1px solid rgba(255,255,255,.12); background:var(--panel2); border-radius:14px; padding:12px; }
 
       .btn{
         margin-top:8px;
@@ -294,6 +383,7 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
 
       @media(max-width:900px){
         .grid,.grid2{ grid-template-columns:1fr; }
+        .links{ display:none; }
       }
     </style>
   </body>
