@@ -92,8 +92,10 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
       }
 
       label{ font-weight:800; display:block; margin-bottom:8px; }
+
       textarea{
         width:100%;
+        box-sizing:border-box; /* ✅ prevents overflow */
         min-height:110px;
         padding:10px;
         border-radius:12px;
