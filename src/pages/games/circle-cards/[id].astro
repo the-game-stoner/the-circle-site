@@ -86,10 +86,21 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
       }
 
       async function load() {
-        const r = await fetch(API + "/api/rooms/" + ROOM);
-        const data = await r.json().catch(() => ({}));
+        const r = await fetch(API + "/api/rooms/" + ROOM).catch((e) => {
+          elPrompt.textContent = "Network error: " + (e?.message || e);
+          elState.textContent = "ERROR";
+          elCards.innerHTML = `<div class="muted">Unable to load room (network).</div>`;
+          return null;
+        });
+
+        if (!r) return;
+
+        const text = await r.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+
         if (!r.ok) {
-          elPrompt.textContent = data.error || "Room not found";
+          elPrompt.textContent = data.error || `Failed (${r.status}): ${text.slice(0, 200)}`;
           elState.textContent = "ERROR";
           elCards.innerHTML = `<div class="muted">Unable to load room.</div>`;
           return;
@@ -147,9 +158,21 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
           method: "POST",
           headers: headers(),
           body: JSON.stringify({ name }),
+        }).catch((e) => {
+          me.textContent = "Network error: " + (e?.message || e);
+          return null;
         });
-        const data = await r.json().catch(() => ({}));
-        if (!r.ok) { me.textContent = data.error || "Join failed"; return; }
+
+        if (!r) return;
+
+        const text = await r.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+
+        if (!r.ok) {
+          me.textContent = data.error || `Join failed (${r.status}): ${text.slice(0, 200)}`;
+          return;
+        }
 
         playerToken = data.playerToken;
         playerId = data.playerId;
@@ -160,17 +183,26 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
       }
 
       async function submit() {
-        const text = document.getElementById("text").value;
+        const textVal = document.getElementById("text").value;
         const out = document.getElementById("submitOut");
         if (!playerToken) { out.textContent = "Join first."; return; }
 
         const r = await fetch(API + "/api/rooms/" + ROOM + "/submit", {
           method: "POST",
           headers: headers(),
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text: textVal }),
+        }).catch((e) => {
+          out.textContent = "Network error: " + (e?.message || e);
+          return null;
         });
-        const data = await r.json().catch(() => ({}));
-        out.textContent = r.ok ? "Submitted ✅" : (data.error || "Submit failed");
+
+        if (!r) return;
+
+        const text = await r.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+
+        out.textContent = r.ok ? "Submitted ✅" : (data.error || `Submit failed (${r.status}): ${text.slice(0, 200)}`);
         load();
       }
 
@@ -182,9 +214,18 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
           method: "POST",
           headers: headers(),
           body: JSON.stringify({ submissionId }),
+        }).catch((e) => {
+          out.textContent = "Network error: " + (e?.message || e);
+          return null;
         });
-        const data = await r.json().catch(() => ({}));
-        out.textContent = r.ok ? "Voted ✅" : (data.error || "Vote failed");
+
+        if (!r) return;
+
+        const text = await r.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+
+        out.textContent = r.ok ? "Voted ✅" : (data.error || `Vote failed (${r.status}): ${text.slice(0, 200)}`);
         load();
       }
 
@@ -192,9 +233,15 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
         const r = await fetch(API + "/api/rooms/" + ROOM + "/reveal", {
           method: "POST",
           headers: headers(),
-        });
-        const data = await r.json().catch(() => ({}));
-        if (!r.ok) alert(data.error || "Reveal failed (host only)");
+        }).catch(() => null);
+
+        if (!r) { alert("Network error during reveal."); return; }
+
+        const text = await r.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+
+        if (!r.ok) alert(data.error || `Reveal failed (${r.status}): ${text.slice(0, 200)}`);
         load();
       }
 
@@ -206,9 +253,15 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
           method: "POST",
           headers: headers(),
           body: JSON.stringify({ prompt: promptText }),
-        });
-        const data = await r.json().catch(() => ({}));
-        if (!r.ok) alert(data.error || "Next round failed (host only)");
+        }).catch(() => null);
+
+        if (!r) { alert("Network error during next round."); return; }
+
+        const text = await r.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+
+        if (!r.ok) alert(data.error || `Next round failed (${r.status}): ${text.slice(0, 200)}`);
         load();
       }
 
