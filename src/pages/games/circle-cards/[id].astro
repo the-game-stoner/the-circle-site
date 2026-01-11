@@ -11,76 +11,80 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Circle Cards • Room {id} • {SITE_NAME}</title>
-    <meta name="description" content={`Circle Cards room ${id} on The-Circle.`} />
     <link rel="icon" href="/favicon.png" type="image/png" />
   </head>
 
   <body>
-    <header class="top">
-      <div class="container nav">
-        <a class="brand" href="/" aria-label={`${SITE_NAME} Home`}>
-          <img src="/favicon.png" alt="" class="logo" />
-          <span class="name">{SITE_NAME}</span>
-        </a>
-
-        <nav class="links" aria-label="Primary">
-          <a href="/discord" class="navLink">Discord</a>
-          <a href="/league" class="navLink">League</a>
-          <a href="/music" class="navLink">Music</a>
-          <a href="/games" class="navLink">Games</a>
-          <a href="/blog" class="navLink">Blog</a>
-        </nav>
-      </div>
-    </header>
-
     <main class="wrap">
       <div class="topline">
-        <h1>Circle Cards <span class="muted">• Room {id}</span></h1>
-        <a class="back" href="/games/circle-cards">New Room</a>
+        <div>
+          <h1>Circle Cards <span class="muted">• Room {id}</span></h1>
+          <div class="muted small" id="status">Loading…</div>
+        </div>
+        <div class="topBtns">
+          <a class="btn ghost" href="/games/circle-cards">New Room</a>
+          <button class="btn ghost" id="copy">Copy Link</button>
+        </div>
       </div>
 
       <section class="card">
-        <div class="label">Prompt</div>
-        <div id="prompt" class="prompt">Loading…</div>
-
-        <div class="controls">
-          <button id="reveal" class="btn ghost">Reveal</button>
-          <button id="next" class="btn ghost">Next Round</button>
+        <div class="row">
+          <div>
+            <div class="label">Black Card</div>
+            <div id="black" class="black">Loading…</div>
+          </div>
+          <div class="meta">
+            <div class="chip" id="phase">…</div>
+            <div class="muted small" id="czar">Czar: …</div>
+            <div class="muted small" id="players">Players: …</div>
+          </div>
         </div>
 
-        <p class="tiny muted">
-          API in use: <span class="mono">{API_URL}</span>
-        </p>
+        <div class="warn" id="minPlayers" style="display:none;">
+          Need <b>4+</b> players to play for real. Share the link and wait for the squad.
+        </div>
       </section>
 
       <section class="grid2">
-        <div class="card">
-          <h2>Join</h2>
-          <input id="name" placeholder="Nickname (optional)" />
-          <button id="join" class="btn primary">Join</button>
-          <div id="me" class="muted small"></div>
-        </div>
+        <section class="card">
+          <div class="row">
+            <h2>Your seat</h2>
+            <span class="muted small" id="me">—</span>
+          </div>
 
-        <div class="card">
-          <h2>Submit</h2>
-          <textarea id="text" placeholder="Your answer…"></textarea>
-          <button id="submit" class="btn primary">Submit</button>
-          <div id="submitOut" class="muted small"></div>
-        </div>
+          <input id="name" placeholder="Nickname" />
+          <button id="join" class="btn primary">Join Room</button>
+          <div id="joinOut" class="muted small"></div>
+
+          <p class="tiny muted">
+            API in use: <span class="mono">{API_URL}</span>
+          </p>
+        </section>
+
+        <section class="card">
+          <div class="row">
+            <h2>Scoreboard</h2>
+          </div>
+          <div id="scores" class="scores muted small">—</div>
+        </section>
       </section>
 
       <section class="card">
         <div class="row">
-          <h2>Revealed Cards</h2>
-          <span id="state" class="chip">…</span>
+          <h2>Your hand (7)</h2>
+          <span class="muted small" id="handHint">Click a card to submit.</span>
         </div>
-        <div id="cards" class="grid"></div>
-        <div id="voteOut" class="muted small"></div>
+        <div id="hand" class="handGrid"></div>
+        <div id="submitOut" class="muted small"></div>
       </section>
 
-      <section class="card">
-        <h2>Winners</h2>
-        <div id="winners" class="muted"></div>
+      <section class="card" id="judgeCard" style="display:none;">
+        <div class="row">
+          <h2>Czar picks the winner</h2>
+          <span class="chip">Judge</span>
+        </div>
+        <div id="submissions" class="handGrid"></div>
+        <div id="judgeOut" class="muted small"></div>
       </section>
     </main>
 
@@ -88,14 +92,37 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       const ROOM = "{id}";
       const API = "{API_URL}";
 
+      // persistent identity per room
       let playerToken = localStorage.getItem("cc_playerToken_" + ROOM) || "";
+      let playerId = localStorage.getItem("cc_playerId_" + ROOM) || "";
       let hostToken = localStorage.getItem("cc_host_" + ROOM) || "";
 
-      const elPrompt = document.getElementById("prompt");
-      const elCards = document.getElementById("cards");
-      const elWinners = document.getElementById("winners");
-      const elState = document.getElementById("state");
-      const me = document.getElementById("me");
+      const elStatus = document.getElementById("status");
+      const elBlack = document.getElementById("black");
+      const elPhase = document.getElementById("phase");
+      const elCzar = document.getElementById("czar");
+      const elPlayers = document.getElementById("players");
+      const elScores = document.getElementById("scores");
+      const elHand = document.getElementById("hand");
+      const elHandHint = document.getElementById("handHint");
+      const elSubmitOut = document.getElementById("submitOut");
+      const elMe = document.getElementById("me");
+      const elMinPlayers = document.getElementById("minPlayers");
+
+      const elJoinOut = document.getElementById("joinOut");
+      const elJudgeCard = document.getElementById("judgeCard");
+      const elSubs = document.getElementById("submissions");
+      const elJudgeOut = document.getElementById("judgeOut");
+
+      document.getElementById("copy").onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(location.href);
+          elStatus.textContent = "Link copied.";
+          setTimeout(() => load(), 500);
+        } catch {
+          elStatus.textContent = "Couldn’t copy. Just copy the URL.";
+        }
+      };
 
       function headers() {
         const h = { "content-type": "application/json" };
@@ -104,171 +131,175 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         return h;
       }
 
-      async function safeJson(r) {
+      async function apiGET(path) {
+        const r = await fetch(API + path, { headers: headers() });
         const text = await r.text();
-        try { return { ok: r.ok, status: r.status, data: JSON.parse(text), text }; }
-        catch { return { ok: r.ok, status: r.status, data: {}, text }; }
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+        return { ok: r.ok, status: r.status, data, text };
       }
 
-      async function load() {
-        let r;
-        try {
-          r = await fetch(API + "/api/rooms/" + ROOM);
-        } catch (e) {
-          elPrompt.textContent = "Network error: " + (e?.message || e);
-          elState.textContent = "ERROR";
-          elCards.innerHTML = `<div class="muted">Unable to load room (network).</div>`;
-          return;
-        }
-
-        const { ok, status, data, text } = await safeJson(r);
-        if (!ok) {
-          elPrompt.textContent = data.error || `Failed (${status}): ${text.slice(0, 200)}`;
-          elState.textContent = "ERROR";
-          elCards.innerHTML = `<div class="muted">Unable to load room.</div>`;
-          return;
-        }
-
-        elPrompt.textContent = data.prompt;
-        elState.textContent = (data.state || "unknown").toUpperCase();
-        renderWinners(data.winners || []);
-        renderCards(data);
+      async function apiPOST(path, body) {
+        const r = await fetch(API + path, {
+          method: "POST",
+          headers: headers(),
+          body: body ? JSON.stringify(body) : "{}",
+        });
+        const text = await r.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+        return { ok: r.ok, status: r.status, data, text };
       }
 
-      function renderWinners(winners) {
-        if (!winners.length) { elWinners.textContent = "No winners yet."; return; }
-        elWinners.innerHTML = winners
-          .slice(-10).reverse()
-          .map(w => `<div>Round ${w.round}: <b>${escapeHtml(w.text)}</b> (${w.votes} votes)</div>`)
+      function renderScores(scores) {
+        // scores expected: array of { name, points } or object map
+        if (!scores) { elScores.textContent = "—"; return; }
+
+        let rows = [];
+        if (Array.isArray(scores)) rows = scores;
+        else rows = Object.entries(scores).map(([name, points]) => ({ name, points }));
+
+        rows.sort((a,b) => (b.points||0) - (a.points||0));
+
+        if (!rows.length) { elScores.textContent = "No points yet."; return; }
+
+        elScores.innerHTML = rows
+          .map(s => `<div class="scoreRow"><span>${escapeHtml(s.name)}</span><b>${s.points||0}</b></div>`)
           .join("");
       }
 
-      function renderCards(room) {
-        elCards.innerHTML = "";
+      function clearHand() { elHand.innerHTML = ""; }
+      function clearSubs() { elSubs.innerHTML = ""; }
 
-        if (room.state !== "voting") {
-          elCards.innerHTML = `<div class="muted">Waiting for reveal.</div>`;
+      function renderHand(hand, canPlay) {
+        clearHand();
+        if (!Array.isArray(hand) || !hand.length) {
+          elHand.innerHTML = `<div class="muted small">No hand yet. Join the room.</div>`;
           return;
         }
 
-        const list = Array.isArray(room.revealedOrder) ? room.revealedOrder : [];
-        if (!list.length) {
-          elCards.innerHTML = `<div class="muted">No cards revealed yet.</div>`;
+        hand.forEach((text) => {
+          const btn = document.createElement("button");
+          btn.className = "whiteCard";
+          btn.innerHTML = `<div class="cardText">${escapeHtml(text)}</div>`;
+          btn.disabled = !canPlay;
+          btn.onclick = () => submitCard(text);
+          elHand.appendChild(btn);
+        });
+      }
+
+      function renderJudge(subs, canJudge) {
+        clearSubs();
+        if (!Array.isArray(subs) || !subs.length) {
+          elSubs.innerHTML = `<div class="muted small">Waiting for submissions…</div>`;
           return;
         }
 
-        list.forEach(c => {
-          const votes = (room.votes && room.votes[c.submissionId]) ? room.votes[c.submissionId] : 0;
-          const div = document.createElement("div");
-          div.className = "tile";
-          div.innerHTML = `
-            <div>${escapeHtml(c.text)}</div>
-            <button class="btn primary">Vote</button>
-            <div class="muted small">Votes: ${votes}</div>
-          `;
-          div.querySelector("button").onclick = () => vote(c.submissionId);
-          elCards.appendChild(div);
+        subs.forEach((s) => {
+          const btn = document.createElement("button");
+          btn.className = "whiteCard";
+          btn.innerHTML = `<div class="cardText">${escapeHtml(s.text || "")}</div>`;
+          btn.disabled = !canJudge;
+          btn.onclick = () => judgePick(s.submissionId);
+          elSubs.appendChild(btn);
         });
       }
 
       async function join() {
-        const name = document.getElementById("name").value;
+        const name = (document.getElementById("name").value || "").trim() || "Anonymous";
+        elJoinOut.textContent = "Joining…";
 
-        let r;
-        try {
-          r = await fetch(API + "/api/rooms/" + ROOM + "/join", {
-            method: "POST",
-            headers: headers(),
-            body: JSON.stringify({ name }),
-          });
-        } catch (e) {
-          me.textContent = "Network error: " + (e?.message || e);
+        const res = await apiPOST(`/api/rooms/${ROOM}/join`, { name });
+        if (!res.ok) {
+          elJoinOut.textContent = res.data.error || `Join failed (${res.status})`;
           return;
         }
 
-        const { ok, status, data, text } = await safeJson(r);
-        if (!ok) { me.textContent = data.error || `Join failed (${status}): ${text.slice(0, 200)}`; return; }
-
-        playerToken = data.playerToken;
+        playerToken = res.data.playerToken || "";
+        playerId = res.data.playerId || "";
         localStorage.setItem("cc_playerToken_" + ROOM, playerToken);
-        me.textContent = "Joined as " + data.name;
+        localStorage.setItem("cc_playerId_" + ROOM, playerId);
+
+        elJoinOut.textContent = "Joined ✅";
         load();
       }
 
-      async function submit() {
-        const textVal = document.getElementById("text").value;
-        const out = document.getElementById("submitOut");
-        if (!playerToken) { out.textContent = "Join first."; return; }
+      async function submitCard(text) {
+        if (!playerToken) { elSubmitOut.textContent = "Join first."; return; }
+        elSubmitOut.textContent = "Submitting…";
 
-        let r;
-        try {
-          r = await fetch(API + "/api/rooms/" + ROOM + "/submit", {
-            method: "POST",
-            headers: headers(),
-            body: JSON.stringify({ text: textVal }),
-          });
-        } catch (e) {
-          out.textContent = "Network error: " + (e?.message || e);
+        const res = await apiPOST(`/api/rooms/${ROOM}/submit`, { text });
+        if (!res.ok) {
+          elSubmitOut.textContent = res.data.error || `Submit failed (${res.status})`;
           return;
         }
 
-        const { ok, status, data, text } = await safeJson(r);
-        out.textContent = ok ? "Submitted ✅" : (data.error || `Submit failed (${status}): ${text.slice(0, 200)}`);
+        elSubmitOut.textContent = "Submitted ✅";
         load();
       }
 
-      async function vote(submissionId) {
-        const out = document.getElementById("voteOut");
-        if (!playerToken) { out.textContent = "Join first."; return; }
+      async function judgePick(submissionId) {
+        elJudgeOut.textContent = "Picking…";
 
-        let r;
-        try {
-          r = await fetch(API + "/api/rooms/" + ROOM + "/vote", {
-            method: "POST",
-            headers: headers(),
-            body: JSON.stringify({ submissionId }),
-          });
-        } catch (e) {
-          out.textContent = "Network error: " + (e?.message || e);
+        const res = await apiPOST(`/api/rooms/${ROOM}/judge`, { submissionId });
+        if (!res.ok) {
+          elJudgeOut.textContent = res.data.error || `Judge failed (${res.status})`;
           return;
         }
 
-        const { ok, status, data, text } = await safeJson(r);
-        out.textContent = ok ? "Voted ✅" : (data.error || `Vote failed (${status}): ${text.slice(0, 200)}`);
+        elJudgeOut.textContent = "Winner picked ✅";
         load();
       }
 
-      async function reveal() {
-        let r;
-        try {
-          r = await fetch(API + "/api/rooms/" + ROOM + "/reveal", { method: "POST", headers: headers() });
-        } catch {
-          alert("Network error during reveal.");
+      async function load() {
+        const res = await apiGET(`/api/rooms/${ROOM}`);
+        if (!res.ok) {
+          elStatus.textContent = res.data.error || `Room load failed (${res.status})`;
+          elBlack.textContent = "—";
           return;
         }
-        const { ok, status, data, text } = await safeJson(r);
-        if (!ok) alert(data.error || `Reveal failed (${status}): ${text.slice(0, 200)}`);
-        load();
-      }
 
-      async function nextRound() {
-        const promptText = prompt("Next prompt:");
-        if (!promptText) return;
+        const room = res.data;
 
-        let r;
-        try {
-          r = await fetch(API + "/api/rooms/" + ROOM + "/next", {
-            method: "POST",
-            headers: headers(),
-            body: JSON.stringify({ prompt: promptText }),
-          });
-        } catch {
-          alert("Network error during next round.");
-          return;
-        }
-        const { ok, status, data, text } = await safeJson(r);
-        if (!ok) alert(data.error || `Next round failed (${status}): ${text.slice(0, 200)}`);
-        load();
+        // These field names depend on the worker rewrite.
+        // Expected shape (recommended):
+        // room.phase: "lobby" | "playing" | "judging"
+        // room.blackCard: string
+        // room.czarName: string
+        // room.playerCount: number
+        // room.scores: array/map
+        // room.me: { name, isCzar, hasSubmitted }
+        // room.hand: string[]
+        // room.submissions: [{ submissionId, text }] (for czar)
+        const phase = room.phase || room.state || "unknown";
+        elPhase.textContent = String(phase).toUpperCase();
+
+        elBlack.textContent = room.blackCard || room.prompt || "—";
+        elCzar.textContent = "Czar: " + (room.czarName || "—");
+
+        const count = room.playerCount ?? (room.players ? Object.keys(room.players).length : 0);
+        elPlayers.textContent = "Players: " + count;
+
+        elMinPlayers.style.display = (count && count < 4) ? "block" : "none";
+
+        const me = room.me || {};
+        elMe.textContent = me.name ? `${me.name}${me.isCzar ? " (Czar)" : ""}` : "Not joined";
+
+        renderScores(room.scores);
+
+        const canPlay = !!playerToken && !me.isCzar && phase !== "judging" && count >= 4 && !me.hasSubmitted;
+        elHandHint.textContent = me.isCzar
+          ? "You’re the czar. Don’t play a card this round."
+          : (me.hasSubmitted ? "You already submitted. Waiting on others…" : "Click a card to submit.");
+
+        renderHand(room.hand, canPlay);
+
+        const canJudge = !!playerToken && !!me.isCzar && phase === "judging";
+        elJudgeCard.style.display = (me.isCzar ? "block" : "none");
+
+        if (me.isCzar) renderJudge(room.submissions, canJudge);
+
+        elStatus.textContent = "Updated.";
       }
 
       function escapeHtml(s) {
@@ -278,91 +309,87 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       }
 
       document.getElementById("join").onclick = join;
-      document.getElementById("submit").onclick = submit;
-      document.getElementById("reveal").onclick = reveal;
-      document.getElementById("next").onclick = nextRound;
 
       load();
-      setInterval(load, 3000);
+      setInterval(load, 2500);
     </script>
 
     <style>
-      :root{
-        --bg:#070a0f;
-        --panel:rgba(255,255,255,.06);
-        --panel2:rgba(255,255,255,.04);
-        --border:rgba(255,255,255,.12);
-        --text:rgba(255,255,255,.92);
-        --muted:rgba(255,255,255,.68);
-        --muted2:rgba(255,255,255,.55);
-        --accent:#09ff03;
-        --shadow:0 18px 44px rgba(0,0,0,.35);
-      }
-      *{ box-sizing:border-box; }
-      body{ margin:0; font-family:system-ui; background:var(--bg); color:var(--text); }
-
-      .top{
-        position:sticky; top:0; z-index:10;
-        backdrop-filter:blur(12px);
-        background:rgba(7,10,15,.65);
-        border-bottom:1px solid rgba(255,255,255,.10);
-      }
-      .container{ max-width:1060px; margin:0 auto; padding:0 18px; }
-      .nav{ display:flex; justify-content:space-between; align-items:center; gap:14px; padding:14px 0; }
-      .brand{ display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:-.02em; }
-      .logo{ width:28px; height:28px; filter:drop-shadow(0 0 10px rgba(9,255,3,.18)); }
-      .name{ font-size:15px; opacity:.95; }
-      .links{ display:flex; gap:14px; font-size:14px; }
-      .navLink{ color:rgba(255,255,255,.78); padding:8px 10px; border-radius:12px; }
-      .navLink:hover{ color:rgba(255,255,255,.95); background:rgba(255,255,255,.06); }
-
-      .wrap{ max-width:1100px; margin:26px auto; padding:0 18px; }
+      body{ margin:0; font-family:system-ui; background:#070a0f; color:#fff; }
+      .wrap{ max-width:1100px; margin:30px auto; padding:0 18px; }
 
       .topline{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end; }
-      .back{
-        color:rgba(255,255,255,.80);
-        border:1px solid rgba(255,255,255,.14);
-        background:rgba(255,255,255,.04);
-        padding:10px 12px;
-        border-radius:12px;
-      }
-      .back:hover{ background:rgba(255,255,255,.06); color:rgba(255,255,255,.95); }
+      .topBtns{ display:flex; gap:10px; flex-wrap:wrap; }
 
-      .card{
-        border:1px solid rgba(255,255,255,.12);
-        background:var(--panel);
-        padding:18px;
-        border-radius:16px;
-        margin:14px 0;
-        box-shadow:var(--shadow);
-      }
+      .card{ border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); padding:18px; border-radius:16px; margin:14px 0; }
       .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-      .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 
-      .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-
+      .row{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
       h1{ margin:0; }
-      h2{ margin:0 0 10px; font-size:18px; }
-      .label{ font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.65); }
-      .prompt{ font-size:18px; margin-top:6px; }
+      h2{ margin:0; font-size:18px; }
 
-      textarea, input{
+      .label{ font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+      .black{
+        margin-top: 8px;
+        font-size: 20px;
+        line-height: 1.35;
+        padding: 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,.16);
+        background: rgba(0,0,0,.35);
+      }
+
+      .meta{ display:flex; flex-direction:column; gap:6px; align-items:flex-end; min-width: 200px; }
+      .warn{
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,170,120,.28);
+        background: rgba(255,170,120,.10);
+        color: rgba(255,255,255,.92);
+        font-size: 13px;
+      }
+
+      input{
         width:100%;
-        margin:10px 0 12px;
+        box-sizing:border-box;
         padding:10px;
         border-radius:12px;
         border:1px solid rgba(255,255,255,.14);
         background:rgba(0,0,0,.25);
         color:#fff;
+        margin-top:10px;
       }
-      textarea{ min-height:90px; }
 
-      .controls{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+      .scores{ margin-top: 10px; display:flex; flex-direction:column; gap:6px; }
+      .scoreRow{ display:flex; justify-content:space-between; gap:10px; padding: 8px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04); }
 
-      .tile{ border:1px solid rgba(255,255,255,.12); background:var(--panel2); border-radius:14px; padding:12px; }
+      .handGrid{
+        margin-top: 12px;
+        display:grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        gap: 10px;
+      }
+
+      .whiteCard{
+        text-align:left;
+        cursor:pointer;
+        border-radius:14px;
+        border:1px solid rgba(255,255,255,.14);
+        background: rgba(255,255,255,.06);
+        padding: 12px;
+        color:#fff;
+        font-weight:700;
+      }
+      .whiteCard:hover{ border-color: rgba(9,255,3,.35); }
+      .whiteCard:disabled{
+        opacity:.55;
+        cursor:not-allowed;
+        border-color: rgba(255,255,255,.12);
+      }
+      .cardText{ font-weight:700; line-height:1.35; }
 
       .btn{
-        margin-top:8px;
         padding:10px 14px;
         border-radius:12px;
         border:1px solid rgba(255,255,255,.18);
@@ -370,20 +397,24 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         color:#fff;
         font-weight:800;
         cursor:pointer;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
       }
       .btn.primary{ border-color:rgba(9,255,3,.55); background:rgba(9,255,3,.14); }
       .btn.ghost{ background:rgba(255,255,255,.04); }
+
+      .chip{ padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.16); font-size:12px; width: fit-content; }
 
       .muted{ color:rgba(255,255,255,.68); }
       .small{ font-size:13px; }
       .tiny{ font-size:12px; margin-top:12px; }
       .mono{ font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
 
-      .chip{ padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.16); font-size:12px; }
-
       @media(max-width:900px){
-        .grid,.grid2{ grid-template-columns:1fr; }
-        .links{ display:none; }
+        .grid2{ grid-template-columns:1fr; }
+        .handGrid{ grid-template-columns: 1fr; }
+        .meta{ align-items:flex-start; }
       }
     </style>
   </body>
