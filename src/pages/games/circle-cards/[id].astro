@@ -1,0 +1,227 @@
+---
+const { id } = Astro.params;
+const SITE_NAME = "The-Circle";
+const API_BASE = import.meta.env.PUBLIC_CC_API;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Circle Cards • Room {id} • {SITE_NAME}</title>
+  </head>
+
+  <body>
+    <main class="wrap">
+      <div class="topline">
+        <h1>Circle Cards <span class="muted">• Room {id}</span></h1>
+        <a class="back muted" href="/games/circle-cards">New Room</a>
+      </div>
+
+      <section class="card">
+        <div class="label">Prompt</div>
+        <div id="prompt" class="prompt">Loading…</div>
+
+        <div class="controls">
+          <button id="reveal" class="btn ghost">Reveal</button>
+          <button id="next" class="btn ghost">Next Round</button>
+        </div>
+      </section>
+
+      <section class="grid2">
+        <div class="card">
+          <h2>Join</h2>
+          <input id="name" placeholder="Nickname (optional)" />
+          <button id="join" class="btn primary">Join</button>
+          <div id="me" class="muted small"></div>
+        </div>
+
+        <div class="card">
+          <h2>Submit</h2>
+          <textarea id="text" placeholder="Your answer…"></textarea>
+          <button id="submit" class="btn primary">Submit</button>
+          <div id="submitOut" class="muted small"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <h2>Revealed Cards</h2>
+          <span id="state" class="chip">…</span>
+        </div>
+        <div id="cards" class="grid"></div>
+        <div id="voteOut" class="muted small"></div>
+      </section>
+
+      <section class="card">
+        <h2>Winners</h2>
+        <div id="winners" class="muted"></div>
+      </section>
+    </main>
+
+    <script>
+      const ROOM = "{id}";
+      const API = "{API_BASE || ''}".replace(/\/+$/, "");
+
+      let playerToken = localStorage.getItem("cc_playerToken_" + ROOM) || "";
+      let playerId = localStorage.getItem("cc_playerId_" + ROOM) || "";
+      let hostToken = localStorage.getItem("cc_host_" + ROOM) || "";
+
+      const elPrompt = document.getElementById("prompt");
+      const elCards = document.getElementById("cards");
+      const elWinners = document.getElementById("winners");
+      const elState = document.getElementById("state");
+      const me = document.getElementById("me");
+
+      function headers() {
+        const h = { "content-type": "application/json" };
+        if (playerToken) h.authorization = "Bearer " + playerToken;
+        if (hostToken) h["x-host-token"] = hostToken;
+        return h;
+      }
+
+      async function load() {
+        const r = await fetch(API + "/api/rooms/" + ROOM);
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          elPrompt.textContent = data.error || "Room not found";
+          return;
+        }
+
+        elPrompt.textContent = data.prompt;
+        elState.textContent = data.state.toUpperCase();
+
+        renderWinners(data.winners || []);
+        renderCards(data);
+      }
+
+      function renderWinners(winners) {
+        if (!winners.length) {
+          elWinners.textContent = "No winners yet.";
+          return;
+        }
+        elWinners.innerHTML = winners
+          .slice(-10).reverse()
+          .map(w => `<div>Round ${w.round}: <b>${escapeHtml(w.text)}</b> (${w.votes} votes)</div>`)
+          .join("");
+      }
+
+      function renderCards(room) {
+        elCards.innerHTML = "";
+        if (room.state !== "voting") {
+          elCards.innerHTML = `<div class="muted">Waiting for reveal.</div>`;
+          return;
+        }
+
+        room.revealedOrder.forEach(c => {
+          const votes = room.votes?.[c.submissionId] || 0;
+          const div = document.createElement("div");
+          div.className = "tile";
+          div.innerHTML = `
+            <div>${escapeHtml(c.text)}</div>
+            <button class="btn primary">Vote</button>
+            <div class="muted small">Votes: ${votes}</div>
+          `;
+          div.querySelector("button").onclick = () => vote(c.submissionId);
+          elCards.appendChild(div);
+        });
+      }
+
+      async function join() {
+        const name = document.getElementById("name").value;
+        const r = await fetch(API + "/api/rooms/" + ROOM + "/join", {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({ name }),
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) { me.textContent = data.error; return; }
+
+        playerToken = data.playerToken;
+        playerId = data.playerId;
+        localStorage.setItem("cc_playerToken_" + ROOM, playerToken);
+        localStorage.setItem("cc_playerId_" + ROOM, playerId);
+        me.textContent = "Joined as " + data.name;
+        load();
+      }
+
+      async function submit() {
+        const text = document.getElementById("text").value;
+        const out = document.getElementById("submitOut");
+        if (!playerToken) { out.textContent = "Join first."; return; }
+
+        const r = await fetch(API + "/api/rooms/" + ROOM + "/submit", {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({ text }),
+        });
+        const data = await r.json().catch(() => ({}));
+        out.textContent = r.ok ? "Submitted ✅" : data.error;
+        load();
+      }
+
+      async function vote(id) {
+        const out = document.getElementById("voteOut");
+        const r = await fetch(API + "/api/rooms/" + ROOM + "/vote", {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({ submissionId: id }),
+        });
+        const data = await r.json().catch(() => ({}));
+        out.textContent = r.ok ? "Voted ✅" : data.error;
+        load();
+      }
+
+      async function reveal() {
+        await fetch(API + "/api/rooms/" + ROOM + "/reveal", {
+          method: "POST",
+          headers: headers(),
+        });
+        load();
+      }
+
+      async function nextRound() {
+        const prompt = prompt("Next prompt:");
+        if (!prompt) return;
+        await fetch(API + "/api/rooms/" + ROOM + "/next", {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({ prompt }),
+        });
+        load();
+      }
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, m =>
+          ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])
+        );
+      }
+
+      document.getElementById("join").onclick = join;
+      document.getElementById("submit").onclick = submit;
+      document.getElementById("reveal").onclick = reveal;
+      document.getElementById("next").onclick = nextRound;
+
+      load();
+      setInterval(load, 3000);
+    </script>
+
+    <style>
+      body{ margin:0; font-family:system-ui; background:#070a0f; color:#fff; }
+      .wrap{ max-width:1100px; margin:30px auto; padding:0 18px; }
+      .topline{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+      .card{ border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); padding:18px; border-radius:16px; margin:14px 0; }
+      .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+      .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+      .tile{ border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); border-radius:14px; padding:12px; }
+      .btn{ margin-top:8px; padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.05); color:#fff; font-weight:800; cursor:pointer; }
+      .btn.primary{ border-color:rgba(9,255,3,.55); background:rgba(9,255,3,.14); }
+      .btn.ghost{ background:rgba(255,255,255,.04); }
+      .muted{ color:rgba(255,255,255,.68); }
+      .small{ font-size:13px; }
+      .chip{ padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.16); font-size:12px; }
+      @media(max-width:900px){ .grid,.grid2{ grid-template-columns:1fr; } }
+    </style>
+  </body>
+</html>
