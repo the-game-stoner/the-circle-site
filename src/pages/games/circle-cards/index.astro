@@ -48,11 +48,6 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
       const promptEl = document.getElementById("prompt");
 
       document.getElementById("create").onclick = async () => {
-        if (!API) {
-          out.textContent = "Missing API base URL.";
-          return;
-        }
-
         if (!promptEl.value.trim()) {
           out.textContent = "Enter a prompt first.";
           return;
@@ -64,11 +59,19 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ prompt: promptEl.value }),
+        }).catch((e) => {
+          out.textContent = "Network error: " + (e?.message || e);
+          return null;
         });
 
-        const data = await r.json().catch(() => ({}));
+        if (!r) return;
+
+        const text = await r.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch {}
+
         if (!r.ok) {
-          out.textContent = data.error || "Failed to create room.";
+          out.textContent = data.error || `Failed (${r.status}): ${text.slice(0, 200)}`;
           return;
         }
 
