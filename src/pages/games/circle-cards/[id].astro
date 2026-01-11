@@ -29,7 +29,7 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
         </div>
 
         <p class="tiny muted">
-          API: <span class="mono">{API_BASE || "MISSING PUBLIC_CC_API"}</span>
+          API: <span class="mono">{API_BASE || "Using default API (workers.dev)"}</span>
         </p>
       </section>
 
@@ -66,7 +66,7 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
 
     <script>
       const ROOM = "{id}";
-      const API = "{API_BASE || ''}".replace(/\/+$/, "");
+      const API = "{API_BASE || 'https://circle-cards-api.thegamestoners.workers.dev'}".replace(/\/+$/, "");
 
       let playerToken = localStorage.getItem("cc_playerToken_" + ROOM) || "";
       let playerId = localStorage.getItem("cc_playerId_" + ROOM) || "";
@@ -86,18 +86,12 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
       }
 
       async function load() {
-        if (!API) {
-          elPrompt.textContent = "Missing PUBLIC_CC_API env var.";
-          elState.textContent = "ERROR";
-          elCards.innerHTML = `<div class="muted">Set PUBLIC_CC_API in Cloudflare Pages and redeploy.</div>`;
-          return;
-        }
-
         const r = await fetch(API + "/api/rooms/" + ROOM);
         const data = await r.json().catch(() => ({}));
         if (!r.ok) {
           elPrompt.textContent = data.error || "Room not found";
           elState.textContent = "ERROR";
+          elCards.innerHTML = `<div class="muted">Unable to load room.</div>`;
           return;
         }
 
@@ -251,6 +245,7 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
 
       textarea{
         width:100%;
+        box-sizing:border-box;
         min-height:90px;
         margin:10px 0 12px;
         padding:10px;
@@ -261,6 +256,7 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
       }
       input{
         width:100%;
+        box-sizing:border-box;
         padding:10px;
         border-radius:12px;
         border:1px solid rgba(255,255,255,.14);
