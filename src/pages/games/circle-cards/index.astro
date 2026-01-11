@@ -37,19 +37,19 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
 
         <p class="tiny muted">
           API:
-          <span class="mono">{API_BASE || "MISSING PUBLIC_CC_API"}</span>
+          <span class="mono">{API_BASE || "Using default API (workers.dev)"}</span>
         </p>
       </section>
     </main>
 
     <script>
-      const API = "{API_BASE || ''}".replace(/\/+$/, "");
+      const API = "{API_BASE || 'https://circle-cards-api.thegamestoners.workers.dev'}".replace(/\/+$/, "");
       const out = document.getElementById("out");
       const promptEl = document.getElementById("prompt");
 
       document.getElementById("create").onclick = async () => {
         if (!API) {
-          out.textContent = "Missing PUBLIC_CC_API env var.";
+          out.textContent = "Missing API base URL.";
           return;
         }
 
@@ -95,7 +95,7 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
 
       textarea{
         width:100%;
-        box-sizing:border-box; /* ✅ prevents overflow */
+        box-sizing:border-box;
         min-height:110px;
         padding:10px;
         border-radius:12px;
@@ -126,5 +126,4 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
       .mono{ font-family:ui-monospace, monospace; }
     </style>
   </body>
-
 </html>
