@@ -27,6 +27,10 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
           <button id="reveal" class="btn ghost">Reveal</button>
           <button id="next" class="btn ghost">Next Round</button>
         </div>
+
+        <p class="tiny muted">
+          API: <span class="mono">{API_BASE || "MISSING PUBLIC_CC_API"}</span>
+        </p>
       </section>
 
       <section class="grid2">
@@ -82,15 +86,23 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
       }
 
       async function load() {
+        if (!API) {
+          elPrompt.textContent = "Missing PUBLIC_CC_API env var.";
+          elState.textContent = "ERROR";
+          elCards.innerHTML = `<div class="muted">Set PUBLIC_CC_API in Cloudflare Pages and redeploy.</div>`;
+          return;
+        }
+
         const r = await fetch(API + "/api/rooms/" + ROOM);
         const data = await r.json().catch(() => ({}));
         if (!r.ok) {
           elPrompt.textContent = data.error || "Room not found";
+          elState.textContent = "ERROR";
           return;
         }
 
         elPrompt.textContent = data.prompt;
-        elState.textContent = data.state.toUpperCase();
+        elState.textContent = (data.state || "unknown").toUpperCase();
 
         renderWinners(data.winners || []);
         renderCards(data);
@@ -109,12 +121,19 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
 
       function renderCards(room) {
         elCards.innerHTML = "";
+
         if (room.state !== "voting") {
           elCards.innerHTML = `<div class="muted">Waiting for reveal.</div>`;
           return;
         }
 
-        room.revealedOrder.forEach(c => {
+        const list = Array.isArray(room.revealedOrder) ? room.revealedOrder : [];
+        if (!list.length) {
+          elCards.innerHTML = `<div class="muted">No cards revealed yet.</div>`;
+          return;
+        }
+
+        list.forEach(c => {
           const votes = room.votes?.[c.submissionId] || 0;
           const div = document.createElement("div");
           div.className = "tile";
@@ -136,7 +155,7 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
           body: JSON.stringify({ name }),
         });
         const data = await r.json().catch(() => ({}));
-        if (!r.ok) { me.textContent = data.error; return; }
+        if (!r.ok) { me.textContent = data.error || "Join failed"; return; }
 
         playerToken = data.playerToken;
         playerId = data.playerId;
@@ -157,38 +176,45 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
           body: JSON.stringify({ text }),
         });
         const data = await r.json().catch(() => ({}));
-        out.textContent = r.ok ? "Submitted ✅" : data.error;
+        out.textContent = r.ok ? "Submitted ✅" : (data.error || "Submit failed");
         load();
       }
 
-      async function vote(id) {
+      async function vote(submissionId) {
         const out = document.getElementById("voteOut");
+        if (!playerToken) { out.textContent = "Join first."; return; }
+
         const r = await fetch(API + "/api/rooms/" + ROOM + "/vote", {
           method: "POST",
           headers: headers(),
-          body: JSON.stringify({ submissionId: id }),
+          body: JSON.stringify({ submissionId }),
         });
         const data = await r.json().catch(() => ({}));
-        out.textContent = r.ok ? "Voted ✅" : data.error;
+        out.textContent = r.ok ? "Voted ✅" : (data.error || "Vote failed");
         load();
       }
 
       async function reveal() {
-        await fetch(API + "/api/rooms/" + ROOM + "/reveal", {
+        const r = await fetch(API + "/api/rooms/" + ROOM + "/reveal", {
           method: "POST",
           headers: headers(),
         });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) alert(data.error || "Reveal failed (host only)");
         load();
       }
 
       async function nextRound() {
-        const prompt = prompt("Next prompt:");
-        if (!prompt) return;
-        await fetch(API + "/api/rooms/" + ROOM + "/next", {
+        const promptText = prompt("Next prompt:");
+        if (!promptText) return;
+
+        const r = await fetch(API + "/api/rooms/" + ROOM + "/next", {
           method: "POST",
           headers: headers(),
-          body: JSON.stringify({ prompt }),
+          body: JSON.stringify({ prompt: promptText }),
         });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) alert(data.error || "Next round failed (host only)");
         load();
       }
 
@@ -210,18 +236,66 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
     <style>
       body{ margin:0; font-family:system-ui; background:#070a0f; color:#fff; }
       .wrap{ max-width:1100px; margin:30px auto; padding:0 18px; }
-      .topline{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+      .topline{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+
       .card{ border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); padding:18px; border-radius:16px; margin:14px 0; }
       .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
       .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+
+      .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+
+      h1{ margin:0; }
+      h2{ margin:0 0 10px; font-size:18px; }
+      .label{ font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+      .prompt{ font-size:18px; margin-top:6px; }
+
+      textarea{
+        width:100%;
+        min-height:90px;
+        margin:10px 0 12px;
+        padding:10px;
+        border-radius:12px;
+        border:1px solid rgba(255,255,255,.14);
+        background:rgba(0,0,0,.25);
+        color:#fff;
+      }
+      input{
+        width:100%;
+        padding:10px;
+        border-radius:12px;
+        border:1px solid rgba(255,255,255,.14);
+        background:rgba(0,0,0,.25);
+        color:#fff;
+        margin:10px 0 12px;
+      }
+
+      .controls{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+
       .tile{ border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); border-radius:14px; padding:12px; }
-      .btn{ margin-top:8px; padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.05); color:#fff; font-weight:800; cursor:pointer; }
+
+      .btn{
+        margin-top:8px;
+        padding:10px 14px;
+        border-radius:12px;
+        border:1px solid rgba(255,255,255,.18);
+        background:rgba(255,255,255,.05);
+        color:#fff;
+        font-weight:800;
+        cursor:pointer;
+      }
       .btn.primary{ border-color:rgba(9,255,3,.55); background:rgba(9,255,3,.14); }
       .btn.ghost{ background:rgba(255,255,255,.04); }
+
       .muted{ color:rgba(255,255,255,.68); }
       .small{ font-size:13px; }
+      .tiny{ font-size:12px; margin-top:12px; }
+      .mono{ font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
       .chip{ padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.16); font-size:12px; }
-      @media(max-width:900px){ .grid,.grid2{ grid-template-columns:1fr; } }
+
+      @media(max-width:900px){
+        .grid,.grid2{ grid-template-columns:1fr; }
+      }
     </style>
   </body>
 </html>
