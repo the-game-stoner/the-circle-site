@@ -2,6 +2,9 @@
 const { id } = Astro.params;
 const SITE_NAME = "The-Circle";
 const API_BASE = import.meta.env.PUBLIC_CC_API;
+
+// Always have a working fallback, but prefer env var when it exists.
+const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.dev").replace(/\/+$/, "");
 ---
 
 <!doctype html>
@@ -29,7 +32,7 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
         </div>
 
         <p class="tiny muted">
-          API: <span class="mono">{API_BASE || "Using default API (workers.dev)"}</span>
+          API in use: <span class="mono">{API_URL}</span>
         </p>
       </section>
 
@@ -66,7 +69,7 @@ const API_BASE = import.meta.env.PUBLIC_CC_API;
 
     <script>
       const ROOM = "{id}";
-      const API = "{API_BASE || 'https://circle-cards-api.thegamestoners.workers.dev'}".replace(/\/+$/, "");
+      const API = "{API_URL}";
 
       let playerToken = localStorage.getItem("cc_playerToken_" + ROOM) || "";
       let playerId = localStorage.getItem("cc_playerId_" + ROOM) || "";
