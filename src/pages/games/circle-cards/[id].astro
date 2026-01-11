@@ -2,8 +2,6 @@
 const { id } = Astro.params;
 const SITE_NAME = "The-Circle";
 const API_BASE = import.meta.env.PUBLIC_CC_API;
-
-// Always have a working fallback, but prefer env var when it exists.
 const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.dev").replace(/\/+$/, "");
 ---
 
@@ -72,7 +70,6 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       const API = "{API_URL}";
 
       let playerToken = localStorage.getItem("cc_playerToken_" + ROOM) || "";
-      let playerId = localStorage.getItem("cc_playerId_" + ROOM) || "";
       let hostToken = localStorage.getItem("cc_host_" + ROOM) || "";
 
       const elPrompt = document.getElementById("prompt");
@@ -178,9 +175,7 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         }
 
         playerToken = data.playerToken;
-        playerId = data.playerId;
         localStorage.setItem("cc_playerToken_" + ROOM, playerToken);
-        localStorage.setItem("cc_playerId_" + ROOM, playerId);
         me.textContent = "Joined as " + data.name;
         load();
       }
