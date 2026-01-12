@@ -15,66 +15,70 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
   </head>
 
   <body>
+    <!-- Put API URL in HTML so JS can’t “{API_URL}” itself -->
     <main class="wrap" data-api={API_URL}>
       <header class="hero">
         <h1>Circle Cards</h1>
         <p class="lead">
-          Create a room, share the link, and play. The black card is drawn inside the room.
+          Create a room, share the link, get at least 4 people in — then the game starts.
         </p>
       </header>
 
-      <section class="grid2">
-        <!-- Create -->
-        <section class="card">
-          <h2>Create a Room</h2>
-          <p class="muted small">Makes a new room instantly and sends you in as host.</p>
+      <section class="card">
+        <h2>Create a room</h2>
 
-          <button id="create" class="btn primary">Create Room</button>
-          <p id="createOut" class="muted small"></p>
+        <label for="hostName">Your name</label>
+        <input id="hostName" placeholder="Nickname (optional)" />
 
-          <p class="tiny muted">
-            API in use: <span class="mono">{API_URL}</span>
-          </p>
-        </section>
+        <button id="create" class="btn primary">Create Room</button>
+        <p id="createOut" class="muted small"></p>
 
-        <!-- Join -->
-        <section class="card">
-          <h2>Join a Room</h2>
-          <p class="muted small">Got a room code? Paste it here.</p>
+        <p class="tiny muted">
+          API in use: <span class="mono" id="apiText"></span>
+        </p>
+      </section>
 
-          <label class="label" for="roomId">Room ID</label>
-          <input id="roomId" placeholder="e.g. 7zwio30" autocomplete="off" />
+      <section class="card">
+        <h2>Join a room</h2>
 
-          <button id="join" class="btn">Join Room</button>
-          <p id="joinOut" class="muted small"></p>
-        </section>
+        <label for="roomId">Room ID</label>
+        <input id="roomId" placeholder="e.g. 7zwio30" />
+
+        <button id="go" class="btn">Go</button>
+        <p class="muted small">Tip: you can also just open the invite link.</p>
       </section>
     </main>
 
     <script>
-      const root = document.querySelector("main.wrap");
+      const root = document.querySelector("main[data-api]");
       const API = (root?.dataset?.api || "").replace(/\/+$/, "");
+      document.getElementById("apiText").textContent = API || "(missing)";
 
       const createOut = document.getElementById("createOut");
-      const joinOut = document.getElementById("joinOut");
-      const roomIdEl = document.getElementById("roomId");
 
-      // Create room: NEW worker should NOT require a prompt here.
+      document.getElementById("go").onclick = () => {
+        const id = (document.getElementById("roomId").value || "").trim();
+        if (!id) return;
+        location.href = "/games/circle-cards/" + encodeURIComponent(id);
+      };
+
       document.getElementById("create").onclick = async () => {
         if (!API) {
-          createOut.textContent = "Missing API URL (PUBLIC_CC_API).";
+          createOut.textContent = "API URL missing (PUBLIC_CC_API).";
           return;
         }
 
-        createOut.textContent = "Creating room…";
+        createOut.textContent = "Creating…";
+
+        const name = (document.getElementById("hostName").value || "").trim();
 
         let r;
         try {
-          // If your worker expects a body, you can change body to "{}"
           r = await fetch(API + "/api/rooms", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: "{}",
+            // send name if your worker supports it; harmless if ignored
+            body: JSON.stringify(name ? { name } : {}),
           });
         } catch (e) {
           createOut.textContent = "Network error: " + (e?.message || e);
@@ -86,56 +90,26 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         try { data = JSON.parse(text); } catch {}
 
         if (!r.ok) {
-          createOut.textContent = data.error || `Failed (${r.status}): ${text.slice(0, 200)}`;
+          createOut.textContent = (data.error || `Failed (${r.status})`) + ": " + text.slice(0, 220);
           return;
         }
 
-        if (!data.roomId) {
-          createOut.textContent = "Created, but response missing roomId.";
-          return;
-        }
-
-        // Save host token if provided
+        // expected from your worker: { roomId, hostToken }
         if (data.hostToken) localStorage.setItem("cc_host_" + data.roomId, data.hostToken);
-
         location.href = "/games/circle-cards/" + data.roomId;
       };
-
-      // Join room: just navigate to /games/circle-cards/:id
-      document.getElementById("join").onclick = () => {
-        const id = (roomIdEl.value || "").trim();
-        if (!id) {
-          joinOut.textContent = "Enter a Room ID.";
-          return;
-        }
-        joinOut.textContent = "";
-        location.href = "/games/circle-cards/" + encodeURIComponent(id);
-      };
-
-      roomIdEl.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") document.getElementById("join").click();
-      });
     </script>
 
     <style>
       body{ margin:0; font-family:system-ui; background:#070a0f; color:#fff; }
-      .wrap{ max-width:980px; margin:40px auto; padding:0 18px; }
-
+      .wrap{ max-width:860px; margin:40px auto; padding:0 18px; }
       .hero{ margin-bottom:18px; }
-      h1{ margin:0 0 6px; font-size:40px; }
-      .lead{ color:rgba(255,255,255,.72); max-width:75ch; margin:0; }
+      h1{ margin:0 0 6px; font-size:42px; }
+      .lead{ color:rgba(255,255,255,.72); max-width:70ch; }
 
-      .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-
-      .card{
-        border:1px solid rgba(255,255,255,.12);
-        background:rgba(255,255,255,.06);
-        border-radius:18px;
-        padding:18px;
-      }
-
-      h2{ margin:0 0 8px; font-size:18px; }
-      .label{ font-weight:800; display:block; margin:12px 0 8px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+      .card{ border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); border-radius:18px; padding:18px; margin:14px 0; }
+      h2{ margin:0 0 10px; font-size:18px; }
+      label{ font-weight:800; display:block; margin: 10px 0 8px; }
 
       input{
         width:100%;
@@ -157,21 +131,12 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         font-weight:800;
         cursor:pointer;
       }
-
-      .btn.primary{
-        border-color:rgba(9,255,3,.55);
-        background:rgba(9,255,3,.14);
-      }
+      .btn.primary{ border-color:rgba(9,255,3,.55); background:rgba(9,255,3,.14); }
 
       .muted{ color:rgba(255,255,255,.68); }
       .small{ font-size:13px; }
-      .tiny{ font-size:12px; margin-top:12px; }
+      .tiny{ font-size:12px; margin-top:10px; }
       .mono{ font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
-
-      @media (max-width: 900px){
-        .grid2{ grid-template-columns:1fr; }
-        h1{ font-size:34px; }
-      }
     </style>
   </body>
 </html>
