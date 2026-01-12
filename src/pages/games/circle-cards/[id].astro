@@ -11,6 +11,7 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Circle Cards • Room {id} • {SITE_NAME}</title>
+    <meta name="description" content="Play Circle Cards — a CAH-style party game for your Discord crew." />
     <link rel="icon" href="/favicon.png" type="image/png" />
   </head>
 
@@ -72,7 +73,7 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       <section class="card">
         <div class="row">
           <h2>Your hand (7)</h2>
-          <span class="muted small" id="handHint">Click a card to submit.</span>
+          <span class="muted small" id="handHint">Join the room to get dealt in.</span>
         </div>
         <div id="hand" class="handGrid"></div>
         <div id="submitOut" class="muted small"></div>
@@ -92,10 +93,9 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       const ROOM = "{id}";
       const API = "{API_URL}";
 
-      // persistent identity per room
+      // identity per room
       let playerToken = localStorage.getItem("cc_playerToken_" + ROOM) || "";
       let playerId = localStorage.getItem("cc_playerId_" + ROOM) || "";
-      let hostToken = localStorage.getItem("cc_host_" + ROOM) || "";
 
       const elStatus = document.getElementById("status");
       const elBlack = document.getElementById("black");
@@ -114,11 +114,16 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       const elSubs = document.getElementById("submissions");
       const elJudgeOut = document.getElementById("judgeOut");
 
+      const nameInput = document.getElementById("name");
+      const joinBtn = document.getElementById("join");
+
+      // remember nickname
+      nameInput.value = localStorage.getItem("cc_name") || "";
+
       document.getElementById("copy").onclick = async () => {
         try {
           await navigator.clipboard.writeText(location.href);
-          elStatus.textContent = "Link copied.";
-          setTimeout(() => load(), 500);
+          elStatus.textContent = "Link copied ✅";
         } catch {
           elStatus.textContent = "Couldn’t copy. Just copy the URL.";
         }
@@ -127,12 +132,16 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       function headers() {
         const h = { "content-type": "application/json" };
         if (playerToken) h.authorization = "Bearer " + playerToken;
-        if (hostToken) h["x-host-token"] = hostToken;
         return h;
       }
 
       async function apiGET(path) {
-        const r = await fetch(API + path, { headers: headers() });
+        let r;
+        try {
+          r = await fetch(API + path, { headers: headers() });
+        } catch (e) {
+          return { ok: false, status: 0, data: { error: "Network error" }, text: String(e?.message || e) };
+        }
         const text = await r.text();
         let data = {};
         try { data = JSON.parse(text); } catch {}
@@ -140,11 +149,16 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       }
 
       async function apiPOST(path, body) {
-        const r = await fetch(API + path, {
-          method: "POST",
-          headers: headers(),
-          body: body ? JSON.stringify(body) : "{}",
-        });
+        let r;
+        try {
+          r = await fetch(API + path, {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify(body || {}),
+          });
+        } catch (e) {
+          return { ok: false, status: 0, data: { error: "Network error" }, text: String(e?.message || e) };
+        }
         const text = await r.text();
         let data = {};
         try { data = JSON.parse(text); } catch {}
@@ -152,7 +166,6 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       }
 
       function renderScores(scores) {
-        // scores expected: array of { name, points } or object map
         if (!scores) { elScores.textContent = "—"; return; }
 
         let rows = [];
@@ -160,7 +173,6 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         else rows = Object.entries(scores).map(([name, points]) => ({ name, points }));
 
         rows.sort((a,b) => (b.points||0) - (a.points||0));
-
         if (!rows.length) { elScores.textContent = "No points yet."; return; }
 
         elScores.innerHTML = rows
@@ -171,19 +183,27 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       function clearHand() { elHand.innerHTML = ""; }
       function clearSubs() { elSubs.innerHTML = ""; }
 
+      // Hand supports:
+      // - ["text", ...]
+      // - [{ cardId, text }, ...]
       function renderHand(hand, canPlay) {
         clearHand();
+
         if (!Array.isArray(hand) || !hand.length) {
           elHand.innerHTML = `<div class="muted small">No hand yet. Join the room.</div>`;
           return;
         }
 
-        hand.forEach((text) => {
+        hand.forEach((entry) => {
+          const cardId = (entry && typeof entry === "object") ? entry.cardId : null;
+          const text = (entry && typeof entry === "object") ? (entry.text || "") : String(entry);
+
           const btn = document.createElement("button");
           btn.className = "whiteCard";
           btn.innerHTML = `<div class="cardText">${escapeHtml(text)}</div>`;
           btn.disabled = !canPlay;
-          btn.onclick = () => submitCard(text);
+
+          btn.onclick = () => submitCard({ cardId, text });
           elHand.appendChild(btn);
         });
       }
@@ -206,12 +226,14 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       }
 
       async function join() {
-        const name = (document.getElementById("name").value || "").trim() || "Anonymous";
-        elJoinOut.textContent = "Joining…";
+        const name = (nameInput.value || "").trim() || "Anonymous";
+        localStorage.setItem("cc_name", name);
 
+        elJoinOut.textContent = "Joining…";
         const res = await apiPOST(`/api/rooms/${ROOM}/join`, { name });
+
         if (!res.ok) {
-          elJoinOut.textContent = res.data.error || `Join failed (${res.status})`;
+          elJoinOut.textContent = res.data.error || `Join failed (${res.status}): ${res.text.slice(0, 160)}`;
           return;
         }
 
@@ -224,13 +246,20 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
         load();
       }
 
-      async function submitCard(text) {
+      async function submitCard({ cardId, text }) {
         if (!playerToken) { elSubmitOut.textContent = "Join first."; return; }
+
         elSubmitOut.textContent = "Submitting…";
 
-        const res = await apiPOST(`/api/rooms/${ROOM}/submit`, { text });
+        // Prefer cardId, fallback to text
+        const body = (cardId !== null && cardId !== undefined)
+          ? { cardId }
+          : { text };
+
+        const res = await apiPOST(`/api/rooms/${ROOM}/submit`, body);
+
         if (!res.ok) {
-          elSubmitOut.textContent = res.data.error || `Submit failed (${res.status})`;
+          elSubmitOut.textContent = res.data.error || `Submit failed (${res.status}): ${res.text.slice(0, 180)}`;
           return;
         }
 
@@ -240,10 +269,10 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
 
       async function judgePick(submissionId) {
         elJudgeOut.textContent = "Picking…";
-
         const res = await apiPOST(`/api/rooms/${ROOM}/judge`, { submissionId });
+
         if (!res.ok) {
-          elJudgeOut.textContent = res.data.error || `Judge failed (${res.status})`;
+          elJudgeOut.textContent = res.data.error || `Judge failed (${res.status}): ${res.text.slice(0, 180)}`;
           return;
         }
 
@@ -254,61 +283,79 @@ const API_URL = (API_BASE || "https://circle-cards-api.thegamestoners.workers.de
       async function load() {
         const res = await apiGET(`/api/rooms/${ROOM}`);
         if (!res.ok) {
-          elStatus.textContent = res.data.error || `Room load failed (${res.status})`;
+          elStatus.textContent = res.data.error || `Room load failed (${res.status}): ${res.text.slice(0, 160)}`;
           elBlack.textContent = "—";
           return;
         }
 
         const room = res.data;
 
-        // These field names depend on the worker rewrite.
-        // Expected shape (recommended):
-        // room.phase: "lobby" | "playing" | "judging"
-        // room.blackCard: string
-        // room.czarName: string
-        // room.playerCount: number
-        // room.scores: array/map
-        // room.me: { name, isCzar, hasSubmitted }
-        // room.hand: string[]
-        // room.submissions: [{ submissionId, text }] (for czar)
-        const phase = room.phase || room.state || "unknown";
+        const phase = room.phase || "unknown";
         elPhase.textContent = String(phase).toUpperCase();
 
-        elBlack.textContent = room.blackCard || room.prompt || "—";
+        elBlack.textContent = room.blackCard || "—";
         elCzar.textContent = "Czar: " + (room.czarName || "—");
+        elPlayers.textContent = "Players: " + (room.playerCount ?? 0);
 
-        const count = room.playerCount ?? (room.players ? Object.keys(room.players).length : 0);
-        elPlayers.textContent = "Players: " + count;
-
-        elMinPlayers.style.display = (count && count < 4) ? "block" : "none";
+        const count = room.playerCount ?? 0;
+        elMinPlayers.style.display = (count < 4) ? "block" : "none";
 
         const me = room.me || {};
-        elMe.textContent = me.name ? `${me.name}${me.isCzar ? " (Czar)" : ""}` : "Not joined";
+        const joined = !!me.name;
+
+        elMe.textContent = joined
+          ? `${me.name}${me.isCzar ? " (Czar)" : ""}`
+          : "Not joined";
 
         renderScores(room.scores);
 
-        const canPlay = !!playerToken && !me.isCzar && phase !== "judging" && count >= 4 && !me.hasSubmitted;
-        elHandHint.textContent = me.isCzar
-          ? "You’re the czar. Don’t play a card this round."
-          : (me.hasSubmitted ? "You already submitted. Waiting on others…" : "Click a card to submit.");
+        // UI enable/disable
+        joinBtn.disabled = joined;
+        nameInput.disabled = joined;
+
+        if (!joined) {
+          elHandHint.textContent = "Join the room to get dealt in.";
+        } else if (me.isCzar) {
+          elHandHint.textContent = "You’re the czar. You don’t play a card this round.";
+        } else if (me.hasSubmitted) {
+          elHandHint.textContent = "You already submitted. Waiting on others…";
+        } else if (count < 4) {
+          elHandHint.textContent = "Waiting for at least 4 players…";
+        } else if (phase !== "playing") {
+          elHandHint.textContent = "Not accepting submissions yet…";
+        } else {
+          elHandHint.textContent = "Click a card to submit.";
+        }
+
+        const canPlay =
+          joined &&
+          !!playerToken &&
+          !me.isCzar &&
+          !me.hasSubmitted &&
+          count >= 4 &&
+          phase === "playing";
 
         renderHand(room.hand, canPlay);
 
-        const canJudge = !!playerToken && !!me.isCzar && phase === "judging";
-        elJudgeCard.style.display = (me.isCzar ? "block" : "none");
+        const canJudge =
+          joined &&
+          !!playerToken &&
+          !!me.isCzar &&
+          phase === "judging";
 
-        if (me.isCzar) renderJudge(room.submissions, canJudge);
+        elJudgeCard.style.display = (joined && me.isCzar) ? "block" : "none";
+        if (joined && me.isCzar) renderJudge(room.submissions, canJudge);
 
         elStatus.textContent = "Updated.";
       }
 
       function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, m =>
+        return String(s).replace(/[&<>"']/g, (m) =>
           ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])
         );
       }
 
-      document.getElementById("join").onclick = join;
+      joinBtn.onclick = join;
 
       load();
       setInterval(load, 2500);
