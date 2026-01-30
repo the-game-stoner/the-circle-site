@@ -11,7 +11,7 @@ const year = new Date().getFullYear();
     <title>Games • {SITE_NAME}</title>
     <meta
       name="description"
-      content="Games built by The-Circle — async-friendly party games and experiments."
+      content="Games built by The-Circle — Unreal Engine projects, party games, and chaos (coming soon)."
     />
     <link rel="icon" href="/favicon.png" type="image/png" />
   </head>
@@ -54,12 +54,12 @@ const year = new Date().getFullYear();
             <div class="kicker">
               <span class="pill">Games</span>
               <span class="dot" aria-hidden="true"></span>
-              <span class="pill soft">Async-friendly • No installs</span>
+              <span class="pill soft">Unreal Engine • PC-first</span>
             </div>
-            <h1>Games</h1>
+            <h1>The-Circle Games</h1>
             <p class="lead">
-              Small, fun games built for hanging out — async friendly, no installs,
-              just click and play.
+              Projects I’m building in Unreal Engine — party games, dark humor, and multiplayer chaos.
+              No fake “play now” buttons. When it’s ready, it’s ready.
             </p>
           </div>
         </section>
@@ -67,23 +67,34 @@ const year = new Date().getFullYear();
         <section class="card">
           <div class="cardHead">
             <div>
-              <h2>Available Games</h2>
-              <p class="note">More ideas are always cooking.</p>
+              <h2>In Development</h2>
+              <p class="note">Follow along — updates will land here (and in Discord).</p>
             </div>
+
+            <a class="btn" href="/discord">Join Discord</a>
           </div>
 
           <div class="grid">
             <article class="tile">
               <div class="tileTop">
-                <h3>Circle Cards</h3>
-                <span class="chip live">Live</span>
+                <h3>Terrible People</h3>
+                <span class="chip dev">In Dev</span>
               </div>
+
               <p>
-                A party card game built for async play.
-                Create a room, share the link, let chaos happen.
+                A PC party card game inspired by Cards Against Humanity — built in Unreal Engine.
+                Create a lobby, play with friends, and embrace being a terrible person.
               </p>
+
+              <ul class="bullets" aria-label="Terrible People details">
+                <li><span class="label">Platform:</span> Windows PC</li>
+                <li><span class="label">Status:</span> Active development</li>
+                <li><span class="label">Release:</span> TBA</li>
+              </ul>
+
               <div class="tileCta">
-                <a class="btn primary" href="/games/circle-cards">Play</a>
+                <a class="btn primary" href="/discord">Get Updates</a>
+                <span class="btn ghost" aria-disabled="true">Release: TBA</span>
               </div>
             </article>
 
@@ -93,8 +104,8 @@ const year = new Date().getFullYear();
                 <span class="chip">Soon™</span>
               </div>
               <p>
-                Experiments, dumb ideas, and community-driven games.
-                If it sounds fun, it’ll probably show up here.
+                New projects will show up here as they become real.
+                Until then, Terrible People is the main mission.
               </p>
             </article>
           </div>
@@ -203,7 +214,7 @@ const year = new Date().getFullYear();
       .dot{ width:5px; height:5px; border-radius:999px; background:rgba(255,255,255,.55); }
 
       h1{ margin:0 0 10px; font-size:44px; letter-spacing:-.03em; }
-      .lead{ max-width:70ch; color:rgba(255,255,255,.72); margin:0; }
+      .lead{ max-width:72ch; color:rgba(255,255,255,.72); margin:0; }
 
       .card{
         margin:20px 0;
@@ -227,13 +238,25 @@ const year = new Date().getFullYear();
       .tile.soft{ opacity:.75; }
       .tileTop{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
       .tile p{ margin:10px 0 0; font-size:14.5px; color:rgba(255,255,255,.70); line-height:1.55; }
-      .tileCta{ margin-top:14px; }
+
+      .bullets{
+        margin:12px 0 0;
+        padding:0;
+        list-style:none;
+        display:grid;
+        gap:6px;
+        font-size:13.5px;
+        color:rgba(255,255,255,.68);
+      }
+      .label{ color:rgba(255,255,255,.88); font-weight:800; }
+
+      .tileCta{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
 
       .chip{
         font-size:12px; padding:6px 10px; border-radius:999px;
         border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.04);
       }
-      .chip.live{ border-color:rgba(9,255,3,.40); background:rgba(9,255,3,.12); }
+      .chip.dev{ border-color:rgba(120,170,255,.45); background:rgba(120,170,255,.14); }
 
       .btn{
         display:inline-block;
@@ -244,6 +267,11 @@ const year = new Date().getFullYear();
         font-weight:800;
       }
       .btn.primary{ border-color:rgba(9,255,3,.55); background:rgba(9,255,3,.16); }
+      .btn.ghost{
+        opacity:.65;
+        cursor:not-allowed;
+        user-select:none;
+      }
 
       .footer{ margin-top:40px; border-top:1px solid rgba(255,255,255,.10); background:rgba(7,10,15,.40); }
       .foot{ display:flex; justify-content:space-between; padding:16px 0; flex-wrap:wrap; gap:12px; }
